@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laporan Kompetitor Flat Downloadable</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&display=swap" rel="stylesheet">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <style>
+        /* ==================== VARIABLE WARNA MONOKROM (Flat & Clean) ==================== */
+        :root {
+            --dark-primary: #212121;    /* Hitam Pekat */
+            --dark-text: #424242;       /* Teks Gelap */
+            --light-bg: #fcfcfc;        /* Background Sangat Terang */
+            --pure-white: #ffffff;      /* Putih Murni */
+            --section-bg: #f5f5f5;      /* Abu-abu Terang (Pemisah) */
+            --input-border: #bdbdbd;    
+            --success-color: #4CAF50;
+        }
+
+        /* ==================== STYLING UMUM & TYPOGRAPHY ==================== */
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background-color: var(--light-bg);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            color: var(--dark-text);
+        }
+
+        .container {
+            background-color: var(--pure-white);
+            padding: 0; 
+            border-radius: 0;
+            box-shadow: none;
+            max-width: 900px; 
+            width: 100%;
+            overflow: hidden; 
+        }
+
+        /* HEADER DARK PRIMARY & RATA TENGAH */
+        h1 {
+            text-align: center; 
+            background-color: var(--dark-primary); 
+            color: var(--pure-white); 
+            margin: 0; 
+            padding: 20px 20px;
+            font-size: 1.8em;
+            font-weight: 700;
+        }
+
+        /* Layout menggunakan CSS Grid - DEFAULT (Desktop/Tablet) */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr; 
+            gap: 10px 20px;
+            align-items: center; 
+        }
+        
+        .form-grid label {
+            font-weight: 500; 
+            color: var(--dark-text);
+            text-align: right;
+            padding-right: 10px;
+            padding-top: 5px;
+            padding-bottom: 5px;
+            line-height: 1.2;
+        }
+        
+        /* Section Styling */
+        .data-section {
+            padding: 15px 20px;
+        }
+        #data-kita {
+            background-color: var(--section-bg); 
+        }
+        .section-title {
+            color: var(--dark-primary);
+            font-size: 1.4em;
+            font-weight: 700;
+            margin-bottom: 15px;
+            padding-bottom: 5px;
+        }
+        
+        /* Input & Controls */
+        input[type="text"], input[type="number"], textarea, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--input-border);
+            border-radius: 4px; 
+            box-sizing: border-box;
+            font-size: 0.9em;
+        }
+        
+        /* Buttons */
+        .submit-container {
+            padding: 20px 20px 30px 20px; 
+            background-color: var(--section-bg); 
+            text-align: center;
+        }
+        .btn {
+            padding: 12px 20px; 
+            font-size: 0.95em;
+            border: none;
+            cursor: pointer;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        .btn-success {
+            background-color: var(--dark-primary); 
+            color: white;
+        }
+        .btn-download {
+            background-color: var(--success-color);
+            color: white;
+        }
+        .btn-remove {
+            background-color: var(--input-border);
+            color: var(--dark-text);
+            font-weight: 500;
+            padding: 5px 10px;
+            font-size: 0.8em;
+        }
+
+        /* --- STYLING REVIEW (TABLE) --- */
+        #review-container {
+            padding: 20px 0;
+            display: none; 
+            background-color: var(--pure-white);
+        }
+        
+        /* Wrapper for horizontal scrolling on screen only (for wide tables) */
+        .review-scroll-wrapper {
+            overflow-x: hidden; 
+            width: 100%;
+        }
+
+        /* Target for html2canvas capture - MUST CONTAIN ALL CONTENT */
+        #review-content-capture {
+            background-color: var(--pure-white); 
+            padding: 10px 20px;
+            margin: 0;
+            width: auto; 
+            box-sizing: border-box;
+        }
+
+        /* Judul Laporan di dalam JPG */
+        .review-title {
+            font-size: 1.6em;
+            margin-bottom: 15px;
+            text-align: center;
+            padding: 0 10px;
+            color: var(--dark-primary);
+        }
+
+        .review-table {
+            min-width: 100%; 
+            width: auto; 
+            border-collapse: collapse;
+            font-size: 0.85em;
+            margin-bottom: 20px;
+            table-layout: fixed;
+        }
+
+        /* Styling Sel dan Header */
+        .review-table th, .review-table td {
+            padding: 10px 8px;
+            text-align: left;
+            border: none;
+            word-wrap: break-word;
+            vertical-align: top; 
+        }
+
+        /* Header Tabel (Hitam) */
+        .review-table th {
+            background-color: var(--dark-primary);
+            color: var(--pure-white);
+            font-weight: 700;
+            text-align: center;
+            vertical-align: middle;
+            border-right: 1px solid rgba(255, 255, 255, 0.2); /* GARIS PEMISAH KOLOM JUDUL */
+        }
+        .review-table th:last-child {
+            border-right: none; /* Hilangkan garis di kolom terakhir */
+        }
+        
+        /* PENGATURAN LEBAR KOLOM UNTUK GAYA LANDSCAPE */
+        .review-table th:nth-child(1), .review-table td:nth-child(1) { width: 20%; } 
+        .review-table th:nth-child(2), .review-table td:nth-child(2) { width: 30%; } 
+        .review-table th:nth-child(3), .review-table td:nth-child(3) { width: 30%; } 
+        .review-table th:nth-child(4), .review-table td:nth-child(4) { width: 10%; text-align: right; } 
+        .review-table th:nth-child(5), .review-table td:nth-child(5) { width: 10%; text-align: center; } 
+
+
+        /* Judul Section di dalam Tabel (Hitam) */
+        .table-section-title {
+            background-color: var(--dark-primary) !important;
+            color: white !important;
+            font-size: 1.1em;
+            text-align: center !important;
+            font-weight: 700 !important;
+            border-top: 2px solid var(--dark-text) !important;
+        }
+
+        /* Tabel Data Identitas (2 Kolom) */
+        .review-table.id-table td {
+            border-bottom: 1px solid var(--section-bg); 
+            width: auto;
+        }
+        .review-table.id-table tr:last-child td {
+             border-bottom: none; 
+        }
+        .review-table .id-header {
+            background-color: var(--pure-white);
+            color: var(--dark-text);
+            font-weight: 700;
+            width: 35%; /* Untuk tampilan desktop */
+        }
+        
+        /* Baris Data Utama (Kompetitor & Kita) */
+        .review-table:not(.id-table) tbody tr {
+            border-bottom: 1px solid var(--section-bg);
+        }
+        .review-table:not(.id-table) tbody tr:last-child {
+            border-bottom: none;
+        }
+
+        /* Baris Total */
+        .review-table .total-row td {
+            font-weight: 700;
+            background-color: var(--section-bg);
+            text-align: right;
+            border-top: 2px solid var(--dark-text) !important;
+            padding-top: 15px; 
+            padding-bottom: 15px;
+            width: auto !important; 
+        }
+        
+        .review-actions {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        /* --- POP UP NOTIFIKASI --- */
+        .notification {
+            visibility: hidden; 
+            min-width: 250px;
+            margin-left: -125px;
+            background-color: var(--success-color);
+            color: #fff;
+            text-align: center;
+            border-radius: 4px;
+            padding: 16px;
+            position: fixed;
+            z-index: 1000;
+            left: 50%;
+            bottom: 30px;
+            font-size: 1em;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            opacity: 0;
+            transition: opacity 0.5s, bottom 0.5s;
+        }
+
+        .notification.show {
+            visibility: visible;
+            opacity: 1;
+            bottom: 50px;
+        }
+
+        /* ==================== MEDIA QUERY (MOBILE) ==================== */
+        @media (max-width: 768px) {
+            
+            /* FORM INPUT: Kolaps ke 1 Kolom */
+            .form-grid {
+                grid-template-columns: 1fr; 
+                gap: 5px 0;
+            }
+
+            .form-grid label {
+                text-align: left;
+                padding-top: 10px;
+                padding-right: 0;
+            }
+
+            /* TOMBOL: Penuh Lebar */
+            .button-container {
+                 justify-content: stretch;
+                 padding: 0 20px 15px 20px;
+            }
+            .button-container button, .submit-container button {
+                width: 100%;
+            }
+            .submit-container, .data-section {
+                padding-left: 15px;
+                padding-right: 15px;
+            }
+            
+            /* REVIEW: Aktifkan Scroll Horizontal untuk Tabel */
+            .review-scroll-wrapper {
+                overflow-x: auto; 
+                padding-bottom: 10px; 
+                padding: 0 10px 10px 10px;
+            }
+            
+            /* Paksa lebar minimum pada tabel utama */
+            .review-table {
+                min-width: 850px;
+                width: auto;
+            }
+            .review-table:not(.id-table) {
+                table-layout: auto;
+            }
+
+            /* Tombol Aksi Review (Bertumpuk) */
+            .review-actions {
+                flex-direction: column;
+                gap: 10px;
+                padding: 0 10px 20px 10px;
+            }
+            .review-actions button {
+                width: 100%;
+            }
+
+            /* Notifikasi di Tengah */
+            .notification {
+                min-width: 90%;
+                margin-left: -45%;
+            }
+            
+            /* ** PERBAIKAN IDENTITAS MOBILE (PER BARIS) ** */
+            .review-table.id-table {
+                min-width: 100%;
+                margin-bottom: 20px;
+            }
+            .review-table.id-table td {
+                display: block; /* Membuat setiap cell (Label & Data) menjadi satu baris penuh */
+                width: auto;
+                border-bottom: none; /* Hilangkan garis antar label/data */
+                padding: 5px 8px; /* Padding lebih kecil */
+            }
+            .review-table.id-table tr:first-child .id-header {
+                 padding-top: 10px;
+            }
+            .review-table.id-table .id-header {
+                font-weight: 700;
+                color: var(--dark-primary);
+                padding-bottom: 0;
+            }
+            .review-table.id-table .id-data {
+                font-weight: 500;
+                padding-top: 0;
+                padding-bottom: 10px;
+                border-bottom: 1px solid var(--section-bg); /* Garis pemisah antar data */
+            }
+            .review-table.id-table tr:last-child .id-data {
+                border-bottom: none;
+                padding-bottom: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>LAPORAN KOMPETITOR</h1>
+        
+        <form id="competitor-report-form">
+            
+            <div id="data-identitas" class="data-section">
+                
+                <div class="form-grid">
+                    <label for="bulan">Bulan</label>
+                    <select id="bulan" name="bulan" required>
+                        <option value="" disabled selected>Pilih Bulan</option>
+                        <option value="Januari">Januari</option>
+                        <option value="Februari">Februari</option>
+                        <option value="Maret">Maret</option>
+                        <option value="April">April</option>
+                        <option value="Mei">Mei</option>
+                        <option value="Juni">Juni</option>
+                        <option value="Juli">Juli</option>
+                        <option value="Agustus">Agustus</option>
+                        <option value="September">September</option>
+                        <option value="Oktober">Oktober</option>
+                        <option value="November">November</option>
+                        <option value="Desember">Desember</option>
+                    </select>
+                    
+                    <label for="nama_sc">Nama SC</label>
+                    <select id="nama_sc" name="nama_sc" onchange="fillStoreData()" required>
+                        <option value="" disabled selected>Pilih Sales Counter</option>
+                        </select>
+
+                    
+                    <label for="nama_toko">Nama Toko</label>
+                    <input type="text" id="nama_toko" name="nama_toko" placeholder="Nama Toko" required readonly>
+                    
+                    <label for="kategori_toko">Kategori Toko</label>
+                    <select id="kategori_toko" name="kategori_toko" required>
+                        <option value="" disabled selected>Pilih Kategori</option>
+                        <option value="Tradisional">Tradisional</option>
+                        <option value="Modern">Modern</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="data-kita" class="data-section">
+                <h2 class="section-title">Data Kita</h2>
+                
+                <div class="form-grid">
+                    
+                    <label>Produk SCI Paint</label>
+                    <div class="checkbox-group" id="produk_sci">
+                        <label><input type="checkbox" name="produk_sci[]" value="Kem-Tone"> Kem-Tone</label>
+                        <label><input type="checkbox" name="produk_sci[]" value="Spectrum"> Spectrum</label>
+                        <label><input type="checkbox" name="produk_sci[]" value="Spectrum SW08"> Spectrum SW08</label>
+                        <label><input type="checkbox" name="produk_sci[]" value="UltraShield"> UltraShield</label>
+                        <label><input type="checkbox" name="produk_sci[]" value="ColorTone"> ColorTone</label>
+                        <label><input type="checkbox" name="produk_sci[]" value="Tamitex"> Tamitex</label>
+                        <label><input type="checkbox" name="produk_sci[]" value="Vinotex"> Vinotex</label>
+                        <label><input type="checkbox" name="produk_sci[]" value="ABC"> ABC</label>
+                    </div>
+                    
+                    <label for="omzet_toko_display">Omzet</label>
+                    <input type="text" id="omzet_toko_display" name="omzet_toko_display" placeholder="Omzet Toko Sendiri (Contoh: 5.000.000)" onkeyup="formatRupiah(this, 'omzet_toko_value')" required>
+                    <input type="hidden" id="omzet_toko_value" name="omzet_toko"> 
+                    
+                    <label for="promo_berjalan_toko">Promo yang berjalan</label>
+                    <textarea id="promo_berjalan_toko" name="promo_berjalan_toko" placeholder="Deskripsi singkat promo toko sendiri" rows="2"></textarea>
+                    
+                    <label for="syarat_ketentuan_toko">Syarat & Ketentuan Promo</label>
+                    <textarea id="syarat_ketentuan_toko" name="syarat_ketentuan_toko" placeholder="Detail syarat dan ketentuan promo toko sendiri" rows="2"></textarea>
+                </div>
+            </div>
+            
+            <div id="data-kompetitor-main" class="data-section">
+                <h2 class="section-title">Data Kompetitor</h2>
+                
+                <div id="kompetitor-container">
+                    </div>
+                
+                <div class="button-container">
+                    <button type="button" class="btn btn-primary" onclick="addKompetitor()">
+                        ➕ Tambah Kompetitor
+                    </button>
+                </div>
+            </div>
+
+            <div class="submit-container">
+                <button type="button" class="btn btn-success" onclick="generateReview()">REVIEW DATA</button>
+            </div>
+            
+        </form>
+
+        <div id="review-container">
+            <div class="review-scroll-wrapper">
+                <div id="review-content-capture">
+                    </div>
+            </div>
+            <div class="review-actions">
+                <button type="button" class="btn btn-primary" onclick="editData()">Koreksi Data</button>
+                <button type="button" class="btn btn-download" onclick="downloadImage()">⬇️ Simpan ke Galeri (JPG)</button>
+            </div>
+        </div>
+        
+        <div id="notification" class="notification">
+            ✅ Data laporan berhasil disimpan ke Galeri!
+        </div>
+
+    </div>
+
+    <script>
+        let kompetitorCount = 0;
+        
+        // ==================== DATA SALES COUNTER & TOKO (DARI GAMBAR) ====================
+        const scData = [
+            {"nama_sc": "MELANI RESTI SUNDARI", "nama_toko": "DEPO SS PND", "jumlah_sc": 1},
+            {"nama_sc": "DHINA TRI ANGGRAENI", "nama_toko": "ANDI JAYA", "jumlah_sc": 1},
+            {"nama_sc": "AYU OKTAVIANI", "nama_toko": "BINTANG ABADI", "jumlah_sc": 1},
+            {"nama_sc": "ACHMAD FAJAR NURSIDIQ", "nama_toko": "MAKMUR MUDA", "jumlah_sc": 1},
+            {"nama_sc": "LUWI MURDANI", "nama_toko": "ADIL", "jumlah_sc": 1},
+            {"nama_sc": "SISKA AMALIA", "nama_toko": "JSM TKI", "jumlah_sc": 1},
+            {"nama_sc": "WILI KAMILUDIN", "nama_toko": "JSM CIWIDEY", "jumlah_sc": 1},
+            {"nama_sc": "IWAN SOLEH", "nama_toko": "MAREMA HADE SRJ", "jumlah_sc": 1},
+            {"nama_sc": "SYALWA TRIVIA RAMADHANI", "nama_toko": "MAREMA SOHIB TKI", "jumlah_sc": 1},
+            {"nama_sc": "NINA SUMIATI", "nama_toko": "JW CIMAHI", "jumlah_sc": 1},
+            {"nama_sc": "EVI YULIA", "nama_toko": "SUMBER REJEKI", "jumlah_sc": 1},
+            {"nama_sc": "AHMAD ZAENUDIN", "nama_toko": "SINAR TERANG ABADI", "jumlah_sc": 1},
+            {"nama_sc": "RUDI YUDHISTIRA", "nama_toko": "DESANGKE BERSAUDARA SEJAHTERA", "jumlah_sc": 1},
+            {"nama_sc": "HAFIZ AZMI", "nama_toko": "KEBON KOLOT PD", "jumlah_sc": 1},
+            {"nama_sc": "SUMI IGA MAWARNI", "nama_toko": "KEMENANGAN JAYA", "jumlah_sc": 1},
+            {"nama_sc": "LENI NURAENI", "nama_toko": "MAJU JAYA", "jumlah_sc": 1},
+            {"nama_sc": "JUAN", "nama_toko": "MAKMUR", "jumlah_sc": 1},
+            {"nama_sc": "CANDRA MULYADI", "nama_toko": "PALEMBANG", "jumlah_sc": 1},
+            {"nama_sc": "ARYA YUDA", "nama_toko": "BJ HOME", "jumlah_sc": 1},
+            {"nama_sc": "ISNI SUSANTI", "nama_toko": "BERDIKARI CIANJUR", "jumlah_sc": 1},
+            {"nama_sc": "ARI ABUL AZIS", "nama_toko": "KARYA JAYA", "jumlah_sc": 1},
+            {"nama_sc": "WIDANENGSIH, KEVIN, LINA", "nama_toko": "DEPO BANGUNAN BDG", "jumlah_sc": 3},
+            {"nama_sc": "LIDYA APRILIANI PRATIWI", "nama_toko": "DEPO WARNA", "jumlah_sc": 1},
+            {"nama_sc": "FAHMI NUR FARIDA", "nama_toko": "DEPO SS GARUT", "jumlah_sc": 1},
+            {"nama_sc": "RIZKI ABDUL ROHIM", "nama_toko": "PUTRA MANDIRI (GRT)", "jumlah_sc": 1},
+            {"nama_sc": "ADE IKHVAN FARID", "nama_toko": "RUMAH WRN SEJAHTERA", "jumlah_sc": 1},
+            {"nama_sc": "FITRIA NUROHMAH", "nama_toko": "TUNAS BANGUNAN TJS", "jumlah_sc": 1},
+            {"nama_sc": "ANISA SEPTIANI", "nama_toko": "ARTESIS PLUMBING", "jumlah_sc": 1},
+            {"nama_sc": "ANINDA RAHAYU", "nama_toko": "ARTESIS PLUMBING", "jumlah_sc": 1}
+        ];
+
+        // FUNGSI UNTUK MENGISI NAMA TOKO DAN JUMLAH SC OTOMATIS
+        function fillStoreData() {
+            const scSelect = document.getElementById('nama_sc');
+            const tokoInput = document.getElementById('nama_toko');
+            const selectedSCName = scSelect.value;
+            
+            // Cari data SC yang dipilih
+            const selectedData = scData.find(item => item.nama_sc === selectedSCName);
+            
+            if (selectedData) {
+                tokoInput.value = selectedData.nama_toko;
+                // Simpan Jumlah SC ke input hidden agar bisa diambil saat review
+                document.getElementById('sc_count_value').value = selectedData.jumlah_sc;
+            } else {
+                tokoInput.value = '';
+                document.getElementById('sc_count_value').value = 0;
+            }
+        }
+
+        // FUNGSI UNTUK MENAMPILKAN NOTIFIKASI
+        function showNotification() {
+            const notification = document.getElementById('notification');
+            notification.classList.add('show');
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000); 
+        }
+        
+        // FUNGSI PENGUNDUHAN GAMBAR (JPG)
+        function downloadImage() {
+            const reviewElement = document.getElementById('review-content-capture');
+            const reviewData = collectFormData();
+            
+            // ** Ambil lebar konten yang sebenarnya (lebar scrollable) **
+            const contentWidth = reviewElement.scrollWidth; 
+            
+            // 1. Render HTML ke Canvas
+            html2canvas(reviewElement, { 
+                scale: 4, 
+                useCORS: true,
+                logging: false,
+                backgroundColor: '#ffffff',
+                allowTaint: true,
+                // Gunakan lebar scrollWidth
+                width: contentWidth, 
+                height: reviewElement.scrollHeight 
+            }).then(canvas => {
+                // 2. Konversi Canvas ke Data URL (JPG Kualitas Tinggi)
+                const imageURL = canvas.toDataURL('image/jpeg', 1.0); 
+
+                // 3. Unduh Gambar Secara Otomatis
+                const link = document.createElement('a');
+                link.download = `Laporan_Kompetitor_${reviewData.nama_toko || 'Toko'}_${reviewData.bulan || 'Bulan'}_${new Date().getTime()}.jpg`;
+                link.href = imageURL;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+                // 4. Tampilkan Notifikasi
+                showNotification();
+            }).catch(error => {
+                console.error("Gagal membuat gambar:", error);
+                alert("Terjadi kesalahan saat menyimpan gambar. Coba lagi.");
+            });
+        }
+        
+        // FUNGSI UTAMA UNTUK MENGAMBIL DAN MEMBUAT TABEL REVIEW
+        function generateReview() {
+            const form = document.getElementById('competitor-report-form');
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+
+            const data = collectFormData();
+            const reviewContent = document.getElementById('review-content-capture');
+            
+            // Ambil Jumlah SC dari Data Kita
+            const scToko = scData.find(item => item.nama_sc === data.nama_sc);
+            const jumlahSCKita = scToko ? scToko.jumlah_sc : 0;
+            
+            // 1. Tambahkan Judul (Pastikan masuk ke JPG)
+            let tableHTML = `<h2 class="review-title">Laporan Kompetitor Review</h2>`;
+            
+            // 2. Buat Tabel Identitas
+            tableHTML += `
+                <table class="review-table id-table">
+                    <tr><td class="id-header">Bulan</td><td class="id-data">${data.bulan}</td></tr>
+                    <tr><td class="id-header">Sales Counter</td><td class="id-data">${data.nama_sc}</td></tr>
+                    <tr><td class="id-header">Store</td><td class="id-data">${data.nama_toko}</td></tr>
+                    <tr><td class="id-header">Kategori</td><td class="id-data">${data.kategori_toko}</td></tr>
+                </table>
+            `;
+            
+            // 3. Buat Tabel Data Kita
+            tableHTML += `
+                <table class="review-table">
+                    <thead>
+                        <tr><th colspan="5" class="table-section-title">Data Kita</th></tr>
+                        <tr>
+                            <th>Produk SCI Paint</th>
+                            <th>Promo yang berjalan</th>
+                            <th>Syarat & Ketentuan Promo</th>
+                            <th>Omzet</th>
+                            <th>Jumlah SC</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>${data.produk_sci.join(', ') || '-'}</td>
+                            <td>${data.promo_berjalan_toko || '-'}</td>
+                            <td>${data.syarat_ketentuan_toko || '-'}</td>
+                            <td>${formatRupiahDisplay(data.omzet_toko_value)}</td>
+                            <td>${jumlahSCKita}</td> </tr>
+                    </tbody>
+                </table>
+            `;
+            
+            // 4. Buat Tabel Data Kompetitor
+            let totalOmzetKompetitor = 0;
+            let totalSCKompetitor = 0;
+            
+            let kompetitorRows = data.kompetitor.map((comp) => {
+                const omzetNumeric = parseInt(comp.omzet_value) || 0;
+                const scNumeric = parseInt(comp.jumlah_sc) || 0;
+                totalOmzetKompetitor += omzetNumeric;
+                totalSCKompetitor += scNumeric;
+
+                return `
+                    <tr>
+                        <td>${comp.nama}</td>
+                        <td>${comp.promo || '-'}</td>
+                        <td>${comp.syarat || '-'}</td>
+                        <td>${formatRupiahDisplay(omzetNumeric)}</td>
+                        <td>${scNumeric}</td>
+                    </tr>
+                `;
+            }).join('');
+
+            tableHTML += `
+                <table class="review-table">
+                    <thead>
+                        <tr><th colspan="5" class="table-section-title">Data Kompetitor</th></tr>
+                        <tr>
+                            <th>Kompetitor</th>
+                            <th>Promo yang berjalan</th>
+                            <th>Syarat & Ketentuan Promo</th>
+                            <th>Omzet</th>
+                            <th>Jumlah SC</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${kompetitorRows}
+                        <tr class="total-row">
+                            <td colspan="3" style="text-align: right; font-weight: 700;">TOTAL KOMPETITOR</td>
+                            <td style="text-align: right; font-weight: 700;">${formatRupiahDisplay(totalOmzetKompetitor)}</td>
+                            <td style="text-align: center; font-weight: 700;">${totalSCKompetitor}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            `;
+
+            reviewContent.innerHTML = tableHTML;
+            document.getElementById('competitor-report-form').style.display = 'none';
+            document.getElementById('review-container').style.display = 'block';
+        }
+
+        // FUNGSI UNTUK KEMBALI KE HALAMAN INPUT
+        function editData() {
+            document.getElementById('review-container').style.display = 'none';
+            document.getElementById('competitor-report-form').style.display = 'block';
+        }
+        
+        // FUNGSI PENDUKUNG (Collect Data, Create/Remove Kompetitor, Format Rupiah)
+        function collectFormData() {
+            const form = document.getElementById('competitor-report-form');
+            const data = {};
+
+            data.bulan = form.elements['bulan'].value;
+            data.nama_sc = form.elements['nama_sc'].value;
+            data.nama_toko = form.elements['nama_toko'].value;
+            data.kategori_toko = form.elements['kategori_toko'].value;
+
+            data.produk_sci = Array.from(form.querySelectorAll('input[name="produk_sci[]"]:checked')).map(cb => cb.value);
+            data.omzet_toko_value = parseInt(form.elements['omzet_toko'].value) || 0;
+            data.promo_berjalan_toko = form.elements['promo_berjalan_toko'].value;
+            data.syarat_ketentuan_toko = form.elements['syarat_ketentuan_toko'].value;
+
+            data.kompetitor = [];
+            const allCompetitorGroups = document.querySelectorAll('#kompetitor-container .kompetitor-group');
+            
+            allCompetitorGroups.forEach((group) => {
+                const namaInput = group.querySelector(`input[name$="[nama]"]`);
+                
+                if (namaInput) { 
+                     data.kompetitor.push({
+                        nama: namaInput.value,
+                        promo: group.querySelector(`textarea[name$="[promo]"]`).value,
+                        syarat: group.querySelector(`textarea[name$="[syarat]"]`).value,
+                        omzet_value: group.querySelector(`input[name$="[omzet_value]"]`).value,
+                        jumlah_sc: group.querySelector(`input[name$="[jumlah_sc]"]`).value
+                    });
+                }
+            });
+            return data;
+        }
+
+        function createKompetitorGroup(index) {
+            return `
+                <div class="kompetitor-header">
+                    <h3>Kompetitor ${index + 1}</h3>
+                    <button type="button" class="btn btn-remove" onclick="removeKompetitor(this)">Hapus</button>
+                </div>
+                <div class="form-grid">
+                    <label for="kompetitor_${index}">Kompetitor</label>
+                    <input type="text" id="kompetitor_${index}" name="kompetitor[${index}][nama]" placeholder="Nama Kompetitor" required>
+                    <label for="promo_berjalan_${index}">Promo yang berjalan</label>
+                    <textarea id="promo_berjalan_${index}" name="kompetitor[${index}][promo]" placeholder="Deskripsi singkat promo kompetitor" rows="2"></textarea>
+                    <label for="syarat_ketentuan_${index}">Syarat & Ketentuan Promo</label>
+                    <textarea id="syarat_ketentuan_${index}" name="kompetitor[${index}][syarat]" placeholder="Detail syarat dan ketentuan promo" rows="2"></textarea>
+                    <label for="omzet_display_${index}">Omzet</label>
+                    <input type="text" id="omzet_display_${index}" name="kompetitor[${index}][omzet_display]" placeholder="Omzet Kompetitor (Contoh: 5.000.000)" onkeyup="formatRupiah(this, 'omzet_value_${index}')" required>
+                    <input type="hidden" id="omzet_value_${index}" name="kompetitor[${index}][omzet_value]"> 
+                    <label for="jumlah_sc_${index}">Jumlah SC</label>
+                    <input type="number" id="jumlah_sc_${index}" name="kompetitor[${index}][jumlah_sc]" placeholder="Jumlah Sales Counter" min="1" required>
+                </div>
+            `;
+        }
+        
+        function addKompetitor() {
+            const container = document.getElementById('kompetitor-container');
+            const newGroup = document.createElement('div');
+            newGroup.className = 'kompetitor-group';
+            newGroup.innerHTML = createKompetitorGroup(kompetitorCount);
+            container.appendChild(newGroup);
+            kompetitorCount++;
+        }
+        
+        function removeKompetitor(button) {
+            const groupToRemove = button.closest('.kompetitor-group');
+            if (document.querySelectorAll('#kompetitor-container .kompetitor-group').length > 1) {
+                groupToRemove.remove();
+                updateKompetitorHeaders(); 
+            } else {
+                alert("Minimal harus ada satu data kompetitor.");
+            }
+        }
+        
+        function updateKompetitorHeaders() {
+            const groups = document.querySelectorAll('#kompetitor-container .kompetitor-group');
+            groups.forEach((group, index) => {
+                const header = group.querySelector('h3');
+                if (header) {
+                    header.textContent = `Kompetitor ${index + 1}`;
+                    const inputs = group.querySelectorAll('input, textarea');
+                    inputs.forEach(input => {
+                        if (input.name) {
+                            input.name = input.name.replace(/kompetitor\[\d+\]/, `kompetitor[${index}]`);
+                        }
+                    });
+                }
+            });
+            kompetitorCount = groups.length;
+        }
+
+        function formatRupiah(input, hiddenId) {
+            let number = input.value.replace(/[^,\d]/g, '').toString();
+            let split = number.split(',');
+            let sisa = split[0].length % 3;
+            let rupiah = split[0].substr(0, sisa);
+            let ribuan = split[0].substr(sisa).match(/\d{3}/gi);
+
+            if (ribuan) {
+                separator = sisa ? '.' : '';
+                rupiah += separator + ribuan.join('.');
+            }
+
+            rupiah = split[1] != undefined ? rupiah + ',' + split[1] : rupiah;
+            input.value = rupiah;
+            
+            let numericValue = parseInt(number.replace(/\./g, '').replace(/,/g, ''));
+            const hiddenInput = document.getElementById(hiddenId);
+            if(hiddenInput) {
+                 hiddenInput.value = isNaN(numericValue) ? 0 : numericValue;
+            }
+           
+        }
+        
+        function formatRupiahDisplay(number) {
+            return new Intl.NumberFormat('id-ID', {
+                style: 'currency',
+                currency: 'IDR',
+                minimumFractionDigits: 0
+            }).format(number);
+        }
+        
+        // FUNGSI UNTUK MENGISI OPSI SELECT NAMA SC (SUDAH DIURUTKAN)
+        function populateSCSelect() {
+            const scSelect = document.getElementById('nama_sc');
+            
+            // Lakukan pengurutan berdasarkan nama_sc secara alfabetis
+            const sortedData = [...scData].sort((a, b) => { // Buat salinan sebelum sorting
+                const nameA = a.nama_sc.toUpperCase();
+                const nameB = b.nama_sc.toUpperCase();
+                if (nameA < nameB) return -1;
+                if (nameA > nameB) return 1;
+                return 0;
+            });
+            
+            sortedData.forEach(item => {
+                const option = document.createElement('option');
+                option.value = item.nama_sc;
+                option.textContent = item.nama_sc;
+                scSelect.appendChild(option);
+            });
+        }
+
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Panggil fungsi untuk mengisi opsi SC yang sudah diurutkan
+            populateSCSelect();
+            // Tambahkan input hidden untuk menyimpan jumlah SC (diperlukan untuk review)
+            const scCountHidden = document.createElement('input');
+            scCountHidden.type = 'hidden';
+            scCountHidden.id = 'sc_count_value';
+            scCountHidden.name = 'sc_count_value';
+            scCountHidden.value = 0;
+            document.getElementById('data-identitas').appendChild(scCountHidden);
+            
+            // Tambah kompetitor default
+            addKompetitor(); 
+            kompetitorCount = 1; 
+        });
+        
+    </script>
+</body>
+</html>
