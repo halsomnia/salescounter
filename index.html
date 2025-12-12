@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Sales Counter Dashboard</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&display=swap" rel="stylesheet">
+
+    <style>
+        :root{
+            --dark-primary:#212121;
+            --dark-text:#424242;
+            --light-bg:#fcfcfc;
+            --pure-white:#ffffff;
+            --success-color:#4CAF50;
+            --disabled-color: #9E9E9E; /* Warna baru untuk tombol disable */
+        }
+
+        body{
+            font-family:'DM Sans',sans-serif;
+            background:var(--light-bg);
+            /* Setup untuk full-screen (100vh) dan menempatkan Judul & Container secara vertikal */
+            display:flex;
+            flex-direction: column; 
+            justify-content: flex-start; 
+            align-items:center; 
+            height:100vh; 
+            margin:0;
+            padding: 0;
+            color:var(--dark-text);
+            box-sizing: border-box;
+        }
+
+        h1{ 
+            text-align:center; 
+            background: none; 
+            color: var(--dark-primary); 
+            margin: 30px 0 0 0; 
+            padding: 0 20px; 
+            font-size:2.2em; 
+            font-weight:700; 
+            width: 100%;
+            max-width: 500px;
+        } 
+
+        .container{ 
+            background:var(--pure-white); 
+            max-width:500px; 
+            width:100%; 
+            box-shadow: none; 
+            border-radius: 0;
+            flex-grow: 1; 
+            display: flex;
+            flex-direction: column;
+        }
+
+        .dashboard-content{
+            padding: 25px 30px; 
+            text-align: center;
+            flex-grow: 1; 
+            display: flex;
+            flex-direction: column;
+            justify-content: center; 
+            align-items: center;
+        }
+
+        .info-text {
+            margin-bottom: 35px; 
+            font-size: 1em; 
+            color: var(--dark-text);
+            padding: 0 10px;
+        }
+
+        .button-grid{
+            display: flex;
+            flex-direction: column;
+            gap: 15px; 
+            width: 100%; 
+            max-width: 350px;
+        }
+
+        .btn{ 
+            padding:15px 20px; 
+            border:none; 
+            font-weight:700; 
+            text-transform: capitalize; 
+            border-radius:4px;
+            font-size: 1.1em; 
+            transition: background-color 0.3s, transform 0.1s;
+            text-decoration: none; 
+            display: block; 
+        }
+        
+        .btn:not(.disabled){ /* Hanya tombol yang tidak disabled yang punya cursor pointer */
+             cursor: pointer;
+        }
+
+        .btn-competitor{ 
+            background:var(--dark-primary); 
+            color:#fff; 
+        }
+        .btn-competitor:hover{
+            background: #3a3a3a;
+            transform: translateY(-2px);
+        }
+
+        /* Gaya untuk tombol yang dinonaktifkan (disabled) */
+        .btn.disabled{ 
+            background: var(--disabled-color); /* Menggunakan warna abu-abu */
+            color: #E0E0E0; /* Teks lebih terang */
+            opacity: 0.8;
+            pointer-events: none; /* Menonaktifkan klik pada tombol */
+            transform: none !important; /* Menghilangkan efek hover/transform */
+        }
+
+        /* MEDIA QUERY */
+        @media (max-width: 500px) {
+             h1 { font-size: 1.8em; margin-top: 20px; }
+             .dashboard-content { padding: 25px 20px; }
+        }
+    </style>
+</head>
+<body>
+    <h1>Sales Counter</h1>
+    <div class="container">
+        <div class="dashboard-content">
+            <p class="info-text">Pilih jenis laporan yang ingin Anda akses:</p>
+
+            <div class="button-grid">
+                <a href="kompetitor.html" class="btn btn-competitor">Laporan Kompetitor</a>
+                
+                <a href="#" class="btn btn-sellout disabled" title="Halaman Sell-Out belum tersedia">Laporan Sell-Out</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
