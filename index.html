@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Laporan Kompetitor - Export JPG Full Width (Single Capture)</title>
+    <title>Laporan Kompetitor</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -20,6 +20,7 @@
             --section-bg:#f5f5f5;
             --input-border:#bdbdbd;
             --success-color:#4CAF50;
+            --error-color:#f44336;
         }
 
         body{
@@ -42,7 +43,29 @@
         .data-section{ padding:15px 20px; }
         .section-title{ color:var(--dark-primary); font-size:1.4em; font-weight:700; margin-bottom:15px; }
 
-        input[type="text"], textarea, select { width:100%; padding:10px; border:1px solid var(--input-border); border-radius:4px; box-sizing:border-box; font-size:0.9em; }
+        input[type="text"], textarea, select { 
+            width:100%; 
+            padding:10px; 
+            border:1px solid var(--input-border); 
+            border-radius:4px; 
+            box-sizing:border-box; 
+            font-size:0.9em; 
+            transition: border-color 0.3s;
+        }
+
+        /* Highlight error */
+        input.error, textarea.error, select.error {
+            border-color: var(--error-color) !important;
+            box-shadow: 0 0 5px rgba(244,67,54,0.3);
+        }
+
+        /* Error untuk grup produk SCI */
+        #produk_sci_wrapper.error {
+            border: 2px solid var(--error-color);
+            border-radius: 4px;
+            padding: 5px;
+            box-shadow: 0 0 5px rgba(244,67,54,0.3);
+        }
 
         .submit-container{ padding:20px 20px 30px; background:var(--section-bg); text-align:center; }
         .btn{ padding:12px 20px; border:none; cursor:pointer; font-weight:700; text-transform:uppercase; }
@@ -71,8 +94,7 @@
 
         .wide-table{ 
             border-collapse:collapse; 
-            /* NEW Total: 62 + 450 + 550 + 160 + 120 + 70 = 1412px */
-            min-width:1412px; 
+            min-width:1277px; 
             width:100%; 
             table-layout:fixed; 
         }
@@ -134,16 +156,18 @@
             <div id="data-kita" class="data-section">
                 <h2 class="section-title">Data SCI Paint</h2>
                 <div class="form-grid">
-                    <label>Produk</label>
-                    <div class="chip-group" id="produk_sci">
-                        <div class="chip" data-value="Kem-Tone">Kem-Tone <input type="checkbox" name="produk_sci[]" value="Kem-Tone"></div>
-                        <div class="chip" data-value="Spectrum">Spectrum <input type="checkbox" name="produk_sci[]" value="Spectrum"></div>
-                        <div class="chip" data-value="Spectrum SW08">Spectrum SW08 <input type="checkbox" name="produk_sci[]" value="Spectrum SW08"></div>
-                        <div class="chip" data-value="UltraShield">UltraShield <input type="checkbox" name="produk_sci[]" value="UltraShield"></div>
-                        <div class="chip" data-value="ColorTone">ColorTone <input type="checkbox" name="produk_sci[]" value="ColorTone"></div>
-                        <div class="chip" data-value="Tamitex">Tamitex <input type="checkbox" name="produk_sci[]" value="Tamitex"></div>
-                        <div class="chip" data-value="Vinotex">Vinotex <input type="checkbox" name="produk_sci[]" value="Vinotex"></div>
-                        <div class="chip" data-value="ABC">ABC <input type="checkbox" name="produk_sci[]" value="ABC"></div>
+                    <label>Produk <span style="color:var(--error-color);">*</span></label>
+                    <div id="produk_sci_wrapper">
+                        <div class="chip-group" id="produk_sci">
+                            <div class="chip" data-value="Kem-Tone">Kem-Tone <input type="checkbox" name="produk_sci[]" value="Kem-Tone"></div>
+                            <div class="chip" data-value="Spectrum">Spectrum <input type="checkbox" name="produk_sci[]" value="Spectrum"></div>
+                            <div class="chip" data-value="Spectrum SW08">Spectrum SW08 <input type="checkbox" name="produk_sci[]" value="Spectrum SW08"></div>
+                            <div class="chip" data-value="UltraShield">UltraShield <input type="checkbox" name="produk_sci[]" value="UltraShield"></div>
+                            <div class="chip" data-value="ColorTone">ColorTone <input type="checkbox" name="produk_sci[]" value="ColorTone"></div>
+                            <div class="chip" data-value="Tamitex">Tamitex <input type="checkbox" name="produk_sci[]" value="Tamitex"></div>
+                            <div class="chip" data-value="Vinotex">Vinotex <input type="checkbox" name="produk_sci[]" value="Vinotex"></div>
+                            <div class="chip" data-value="ABC">ABC <input type="checkbox" name="produk_sci[]" value="ABC"></div>
+                        </div>
                     </div>
 
                     <label for="omzet_toko_display">Omzet</label>
@@ -230,6 +254,12 @@
                 if(!cb) return;
                 cb.checked = !cb.checked;
                 chip.classList.toggle('active', cb.checked);
+
+                // Hapus error pada produk SCI jika ada yang dipilih
+                const wrapper = document.getElementById('produk_sci_wrapper');
+                if (wrapper && document.querySelector('#produk_sci input:checked')) {
+                    wrapper.classList.remove('error');
+                }
             });
         }
 
@@ -270,7 +300,7 @@
                             <option>SANLEX</option><option>TOA</option><option>VINILEX</option><option>WARNA AGUNG</option>
                             <option value="LAINNYA">Lainnya (ketik sendiri)</option>
                         </select>
-                        <input type="text" name="nama_kompetitor_input_${kompetitorCount}" id="nama_kompetitor_input_${kompetitorCount}" placeholder="Masukkan nama brand" style="margin-top:8px; display:none;">
+                        <input type="text" name="nama_kompetitor_input_${kompetitorCount}" id="nama_kompetitor_input_${kompetitorCount}" placeholder="Masukkan nama brand" style="margin-top:8px; display:none;" required>
                     </div>
 
                     <label></label>
@@ -310,70 +340,112 @@
             const sel = document.querySelector(`select[name="nama_kompetitor_select_${id}"]`);
             const inp = document.getElementById(`nama_kompetitor_input_${id}`);
             if(!sel||!inp) return;
-            if(sel.value === 'LAINNYA'){ inp.style.display='block'; inp.required = true; }
-            else { inp.style.display='none'; inp.required = false; inp.value = ''; }
+            if(sel.value === 'LAINNYA'){
+                inp.style.display='block';
+                inp.required = true;
+            } else {
+                inp.style.display='none';
+                inp.required = false;
+                inp.value = '';
+            }
         }
 
-        function collectFormData(){
-            const f = document.getElementById('competitor-report-form');
-            const d = {};
-            d.bulan = f.bulan.value;
-            d.nama_sc = f.nama_sc.value;
-            d.nama_toko = f.nama_toko.value;
-            d.kategori_toko = f.kategori_toko.value;
-            d.omzet_toko = Number(document.getElementById('omzet_toko_value').value || 0);
-            d.promo_berjalan_toko = f.promo_berjalan_toko.value.trim();
-            d.syarat_ketentuan_toko = f.syarat_ketentuan_toko.value.trim();
-            d.produk_sci = Array.from(f.querySelectorAll('#produk_sci input:checked')).map(x=>x.value);
+        // Hapus class error saat input/change
+        function clearErrorOnInput(){
+            document.querySelectorAll('input, select, textarea').forEach(el => {
+                el.addEventListener('input', function(){ this.classList.remove('error'); });
+                el.addEventListener('change', function(){ this.classList.remove('error'); });
+            });
+        }
 
-            d.kompetitor = [];
-            document.querySelectorAll('.kompetitor-group').forEach(g=>{
-                const any = g.querySelector('select[name^="nama_kompetitor_select_"], input[name^="nama_kompetitor_input_"], select[name^="jumlah_sc_kompetitor_"], input[name^="omzet_kompetitor_value_"]');
-                if(!any) return;
-                const m = any.name.match(/_(\d+)$/);
-                if(!m) return;
-                const i = m[1];
+        function validateForm(){
+            let isValid = true;
+            let firstError = null;
 
-                const sel = g.querySelector(`select[name="nama_kompetitor_select_${i}"]`);
-                const inpBrand = g.querySelector(`input[name="nama_kompetitor_input_${i}"]`);
-                let nama = '';
-                if(sel){ nama = (sel.value === 'LAINNYA' && inpBrand) ? inpBrand.value.trim() : sel.value; }
-                else { const old = g.querySelector(`input[name="nama_kompetitor_${i}"]`); nama = old? old.value.trim() : ''; }
+            // Hapus semua error sebelumnya
+            document.querySelectorAll('.error').forEach(el => el.classList.remove('error'));
 
-                const omzetVal = Number(g.querySelector(`input[name="omzet_kompetitor_value_${i}"]`)?.value || 0);
-                const jumlahScVal = g.querySelector(`select[name="jumlah_sc_kompetitor_${i}"]`)?.value || g.querySelector(`input[name="jumlah_sc_kompetitor_${i}"]`)?.value || '';
-
-                d.kompetitor.push({
-                    nama_kompetitor: nama,
-                    omzet_kompetitor: omzetVal,
-                    jumlah_sc_kompetitor: jumlahScVal,
-                    promo_berjalan_kompetitor: g.querySelector(`textarea[name="promo_berjalan_kompetitor_${i}"]`)?.value.trim() || '',
-                    syarat_ketentuan_kompetitor: g.querySelector(`textarea[name="syarat_ketentuan_kompetitor_${i}"]`)?.value.trim() || ''
-                });
+            // Validasi field utama
+            const mainFields = ['bulan', 'nama_sc', 'kategori_toko', 'omzet_toko_display'];
+            mainFields.forEach(id => {
+                const el = document.getElementById(id);
+                if (!el || !el.value.trim()) {
+                    el.classList.add('error');
+                    if (!firstError) firstError = el;
+                    isValid = false;
+                }
             });
 
-            return d;
+            // Validasi Produk SCI (minimal 1 dipilih)
+            const produkChecked = document.querySelectorAll('#produk_sci input:checked').length;
+            if (produkChecked === 0) {
+                const wrapper = document.getElementById('produk_sci_wrapper');
+                wrapper.classList.add('error');
+                if (!firstError) firstError = wrapper;
+                isValid = false;
+            }
+
+            // Validasi setiap kompetitor
+            document.querySelectorAll('.kompetitor-group').forEach(group => {
+                const selectBrand = group.querySelector('select[name^="nama_kompetitor_select_"]');
+                const inputBrand = group.querySelector('input[name^="nama_kompetitor_input_"]');
+                const omzetDisplay = group.querySelector('input[name^="omzet_kompetitor_display_"]');
+                const jumlahSC = group.querySelector('select[name^="jumlah_sc_kompetitor_"]');
+
+                let brandValue = '';
+                if (selectBrand.value === 'LAINNYA') {
+                    brandValue = inputBrand.value.trim();
+                } else {
+                    brandValue = selectBrand.value;
+                }
+
+                if (!brandValue) {
+                    selectBrand.classList.add('error');
+                    if (inputBrand.style.display !== 'none') inputBrand.classList.add('error');
+                    if (!firstError) firstError = selectBrand;
+                    isValid = false;
+                }
+
+                if (!omzetDisplay.value.trim()) {
+                    omzetDisplay.classList.add('error');
+                    if (!firstError) firstError = omzetDisplay;
+                    isValid = false;
+                }
+
+                if (!jumlahSC.value) {
+                    jumlahSC.classList.add('error');
+                    if (!firstError) firstError = jumlahSC;
+                    isValid = false;
+                }
+            });
+
+            if (!isValid) {
+                alert('Lengkapi Data');
+                if (firstError) {
+                    firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    if (firstError.focus) firstError.focus();
+                }
+            }
+
+            return isValid;
         }
 
         function generateReview(){
-            if(!document.getElementById('competitor-report-form').checkValidity()) return;
+            if (!validateForm()) return;
+
             const data = collectFormData();
             const cap = document.getElementById('review-content-capture');
 
-            // totals
             let totalOmzet = Number(data.omzet_toko || 0);
             let totalSc = Number(scData.find(x=>x.nama_sc===data.nama_sc)?.jumlah_sc || 0);
             data.kompetitor.forEach(k=>{ totalOmzet += Number(k.omzet_kompetitor||0); totalSc += Number(k.jumlah_sc_kompetitor||0); });
 
-            // Date preparation for note
             const today = new Date();
             const formattedDate = today.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
             const scName = escapeHtml(data.nama_sc); 
 
-            // Inject the Header to be captured
             let html = `<div style="text-align:center; background:var(--dark-primary); color:var(--pure-white); margin:-10px -20px 20px -20px; padding:20px; font-size:1.8em; font-weight:700; min-width:100%;">Laporan Kompetitor</div>`;
 
-            // identity (header)
             html += `<table class="id-table">
                     <tr><td style="padding-right:18px; font-weight:700">Bulan</td><td>${escapeHtml(data.bulan)||'-'}</td><td style="padding-right:18px; font-weight:700">Sales Counter</td><td>${scName||'-'}</td></tr>
                     <tr><td style="font-weight:700">Store</td><td>${escapeHtml(data.nama_toko)||'-'}</td><td style="font-weight:700">Kategori</td><td>${escapeHtml(data.kategori_toko)||'-'}</td></tr>
@@ -382,7 +454,8 @@
             html += `<div style="overflow-x:auto;"><table class="wide-table">
                 <thead>
                     <tr>
-                        <th style="min-width:62px">Brand</th> <th style="min-width:450px">Promo yang berjalan</th> 
+                        <th style="min-width:315px">Brand</th> 
+                        <th style="min-width:450px">Promo yang berjalan</th> 
                         <th style="min-width:550px">Syarat & Ketentuan Promo</th>
                         <th style="width:160px; text-align:center">Omzet</th>
                         <th style="width:120px; text-align:center">Jumlah SC</th>
@@ -427,7 +500,6 @@
                 </tfoot>
             </table></div>`;
 
-            // Add the note at the bottom
             html += `<div style="margin-top:20px; text-align:right; font-size:0.85em; font-style:italic; padding-right:10px;">
                 Laporan kompetitor ini dibuat oleh ${scName} pada tanggal ${formattedDate}.
             </div>`;
@@ -437,7 +509,54 @@
             document.getElementById('review-container').style.display = 'block';
         }
 
-        function editData(){ document.getElementById('competitor-report-form').style.display = 'block'; document.getElementById('review-container').style.display = 'none'; }
+        function collectFormData(){
+            const f = document.getElementById('competitor-report-form');
+            const d = {};
+            d.bulan = f.bulan.value;
+            d.nama_sc = f.nama_sc.value;
+            d.nama_toko = f.nama_toko.value;
+            d.kategori_toko = f.kategori_toko.value;
+            d.omzet_toko = Number(document.getElementById('omzet_toko_value').value || 0);
+            d.promo_berjalan_toko = f.promo_berjalan_toko.value.trim();
+            d.syarat_ketentuan_toko = f.syarat_ketentuan_toko.value.trim();
+            d.produk_sci = Array.from(f.querySelectorAll('#produk_sci input:checked')).map(x=>x.value);
+
+            d.kompetitor = [];
+            document.querySelectorAll('.kompetitor-group').forEach(g=>{
+                const any = g.querySelector('select[name^="nama_kompetitor_select_"]');
+                if(!any) return;
+                const m = any.name.match(/_(\d+)$/);
+                if(!m) return;
+                const i = m[1];
+
+                const sel = g.querySelector(`select[name="nama_kompetitor_select_${i}"]`);
+                const inpBrand = g.querySelector(`input[name="nama_kompetitor_input_${i}"]`);
+                let nama = '';
+                if(sel.value === 'LAINNYA' && inpBrand){
+                    nama = inpBrand.value.trim();
+                } else {
+                    nama = sel.value;
+                }
+
+                const omzetVal = Number(g.querySelector(`input[name="omzet_kompetitor_value_${i}"]`)?.value || 0);
+                const jumlahScVal = g.querySelector(`select[name="jumlah_sc_kompetitor_${i}"]`)?.value || '';
+
+                d.kompetitor.push({
+                    nama_kompetitor: nama,
+                    omzet_kompetitor: omzetVal,
+                    jumlah_sc_kompetitor: jumlahScVal,
+                    promo_berjalan_kompetitor: g.querySelector(`textarea[name="promo_berjalan_kompetitor_${i}"]`)?.value.trim() || '',
+                    syarat_ketentuan_kompetitor: g.querySelector(`textarea[name="syarat_ketentuan_kompetitor_${i}"]`)?.value.trim() || ''
+                });
+            });
+
+            return d;
+        }
+
+        function editData(){ 
+            document.getElementById('competitor-report-form').style.display = 'block'; 
+            document.getElementById('review-container').style.display = 'none'; 
+        }
 
         function formatRupiah(inp, hidNameOrId){
             let v = inp.value.replace(/[^0-9]/g,'');
@@ -454,6 +573,7 @@
             scData.forEach(x=>{ const opt = document.createElement('option'); opt.value = x.nama_sc; opt.textContent = x.nama_sc; sel.appendChild(opt); });
             const hid = document.createElement('input'); hid.type='hidden'; hid.id='sc_count_value'; document.getElementById('data-identitas').appendChild(hid);
             setupChipToggle();
+            clearErrorOnInput();
         });
 
         // ================================================
@@ -467,17 +587,14 @@
             
             if (!scrollWrapper) return alert('Error: Wrapper scroll tidak ditemukan.');
 
-            // 1. Simpan dan ubah gaya CSS yang penting
             const originalWrapperOverflow = scrollWrapper.style.overflowX;
             const originalWrapperWidth = scrollWrapper.style.width;
 
-            // Paksa wrapper untuk menampilkan konten penuh (horizontal)
             scrollWrapper.style.overflowX = 'visible';
             scrollWrapper.style.width = 'fit-content'; 
             scrollWrapper.style.maxWidth = 'none';
 
-            // 2. Set Konfigurasi html2canvas
-            const renderScale = 3; // Skala tinggi untuk kualitas (300% resolusi)
+            const renderScale = 3;
 
             try {
                 document.body.style.cursor = 'progress';
@@ -485,7 +602,6 @@
                 const fullWidth = captureRoot.scrollWidth; 
                 const fullHeight = captureRoot.scrollHeight; 
                 
-                // Gunakan html2canvas untuk menangkap seluruh area sekaligus
                 const canvas = await html2canvas(captureRoot, {
                     scale: renderScale,
                     width: fullWidth,
@@ -495,12 +611,10 @@
                     backgroundColor: '#ffffff'
                 });
 
-                // 3. Kembalikan gaya CSS original
                 scrollWrapper.style.overflowX = originalWrapperOverflow;
                 scrollWrapper.style.width = originalWrapperWidth;
                 scrollWrapper.style.maxWidth = ''; 
 
-                // 4. Konversi canvas ke blob (kualitas JPG tinggi: 0.98)
                 function canvasToBlob(canvas, quality = 0.98) { 
                     return new Promise(resolve => {
                         canvas.toBlob(blob => resolve(blob), 'image/jpeg', quality);
@@ -511,7 +625,6 @@
                 try {
                     blob = await canvasToBlob(canvas, 0.98); 
                 } catch (err) {
-                    // Fallback jika toBlob gagal
                     console.error("toBlob failed, using DataURL fallback.", err);
                     try {
                         const dataURL = canvas.toDataURL('image/jpeg', 0.95); 
@@ -529,7 +642,6 @@
                     }
                 }
 
-                // 5. Download
                 if (blob) {
                     const url = URL.createObjectURL(blob);
                     const a = document.createElement('a');
@@ -545,13 +657,11 @@
                 console.error("HTML2Canvas capture failed:", err);
                 alert('Gagal menangkap konten: ' + (err.message || err));
             } finally {
-                // 6. Pastikan kursor dan CSS dikembalikan ke keadaan awal
                 document.body.style.cursor = '';
                 scrollWrapper.style.overflowX = originalWrapperOverflow;
                 scrollWrapper.style.width = originalWrapperWidth;
                 scrollWrapper.style.maxWidth = '';
 
-                // show notif
                 const notif = document.getElementById('notification');
                 if (notif) {
                     notif.classList.add('show');
