@@ -206,11 +206,11 @@
 
             <div class="review-actions">
                 <button type="button" class="btn btn-primary" onclick="editData()">Koreksi Data</button>
-                <button type="button" class="btn btn-download" onclick="downloadImage()">Simpan ke Galeri (JPG)</button>
+                <button type="button" class="btn btn-download" onclick="sendToWhatsApp()">Kirim ke WA</button>
             </div>
         </div>
 
-        <div id="notification" class="notification">Data laporan berhasil disimpan ke Galeri!</div>
+        <div id="notification" class="notification">Sedang membuka WhatsApp...</div>
     </div>
 
     <script>
@@ -433,25 +433,27 @@
             return isValid;
         }
 
+        let currentData = null; // Untuk menyimpan data form saat review
+
         function generateReview(){
             if (!validateForm()) return;
 
-            const data = collectFormData();
+            currentData = collectFormData();
             const cap = document.getElementById('review-content-capture');
 
-            let totalOmzet = Number(data.omzet_toko || 0);
-            let totalSc = Number(scData.find(x=>x.nama_sc===data.nama_sc)?.jumlah_sc || 0);
-            data.kompetitor.forEach(k=>{ totalOmzet += Number(k.omzet_kompetitor||0); totalSc += Number(k.jumlah_sc_kompetitor||0); });
+            let totalOmzet = Number(currentData.omzet_toko || 0);
+            let totalSc = Number(scData.find(x=>x.nama_sc===currentData.nama_sc)?.jumlah_sc || 0);
+            currentData.kompetitor.forEach(k=>{ totalOmzet += Number(k.omzet_kompetitor||0); totalSc += Number(k.jumlah_sc_kompetitor||0); });
 
             const today = new Date();
             const formattedDate = today.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
-            const scName = escapeHtml(data.nama_sc); 
+            const scName = escapeHtml(currentData.nama_sc); 
 
             let html = `<div style="text-align:center; background:var(--dark-primary); color:var(--pure-white); margin:-10px -20px 20px -20px; padding:20px; font-size:1.8em; font-weight:700; min-width:100%;">Laporan Kompetitor</div>`;
 
             html += `<table class="id-table">
-                    <tr><td style="padding-right:18px; font-weight:700">Bulan</td><td>${escapeHtml(data.bulan)||'-'}</td><td style="padding-right:18px; font-weight:700">Sales Counter</td><td>${scName||'-'}</td></tr>
-                    <tr><td style="font-weight:700">Store</td><td>${escapeHtml(data.nama_toko)||'-'}</td><td style="font-weight:700">Kategori</td><td>${escapeHtml(data.kategori_toko)||'-'}</td></tr>
+                    <tr><td style="padding-right:18px; font-weight:700">Bulan</td><td>${escapeHtml(currentData.bulan)||'-'}</td><td style="padding-right:18px; font-weight:700">Sales Counter</td><td>${scName||'-'}</td></tr>
+                    <tr><td style="font-weight:700">Store</td><td>${escapeHtml(currentData.nama_toko)||'-'}</td><td style="font-weight:700">Kategori</td><td>${escapeHtml(currentData.kategori_toko)||'-'}</td></tr>
                 </table>`;
 
             html += `<div style="overflow-x:auto;"><table class="wide-table">
@@ -467,20 +469,20 @@
                 </thead>
                 <tbody>`;
 
-            const scCount = scData.find(x=>x.nama_sc===data.nama_sc)?.jumlah_sc || 0;
-            const sciPct = totalOmzet ? (Number(data.omzet_toko||0)/totalOmzet)*100 : null;
+            const scCount = scData.find(x=>x.nama_sc===currentData.nama_sc)?.jumlah_sc || 0;
+            const sciPct = totalOmzet ? (Number(currentData.omzet_toko||0)/totalOmzet)*100 : null;
             html += `<tr>
-                        <td><strong>Data SCI Paint</strong><br><small>${escapeHtml(data.produk_sci.join(', ')||'-')}</small></td>
-                        <td>${escapeHtml(data.promo_berjalan_toko)||'-'}</td>
-                        <td>${escapeHtml(data.syarat_ketentuan_toko)||'-'}</td>
-                        <td class="right">${formatToRupiah(data.omzet_toko)}</td>
+                        <td><strong>Data SCI Paint</strong><br><small>${escapeHtml(currentData.produk_sci.join(', ')||'-')}</small></td>
+                        <td>${escapeHtml(currentData.promo_berjalan_toko)||'-'}</td>
+                        <td>${escapeHtml(currentData.syarat_ketentuan_toko)||'-'}</td>
+                        <td class="right">${formatToRupiah(currentData.omzet_toko)}</td>
                         <td class="center">${scCount}</td>
                         <td class="center">${sciPct===null? '-' : `${round1(sciPct)}%`}</td>
                     </tr>`;
 
             html += `<tr class="group-sep"><td colspan="6">Data Kompetitor</td></tr>`;
 
-            data.kompetitor.forEach(k=>{
+            currentData.kompetitor.forEach(k=>{
                 const pct = totalOmzet ? (Number(k.omzet_kompetitor||0)/totalOmzet)*100 : null;
                 html += `<tr>
                             <td>${escapeHtml(k.nama_kompetitor)||'-'}</td>
@@ -580,21 +582,27 @@
         });
 
         // ================================================
-        // Single Capture - HIGH QUALITY & FULL WIDTH
+        // Kirim ke WhatsApp - HIGH QUALITY JPG dengan teks caption
         // ================================================
-        async function downloadImage() {
+        async function sendToWhatsApp() {
+            if (!currentData) {
+                alert('Data belum di-review. Silakan review data terlebih dahulu.');
+                return;
+            }
+
+            const captionText = `Laporan kompetitor bulan ${currentData.bulan} - ${currentData.nama_sc}, ${currentData.nama_toko}`;
+
             const captureRoot = document.getElementById('review-content-capture');
-            if (!captureRoot) return alert('Tidak ada konten review untuk disimpan.');
+            if (!captureRoot) return alert('Tidak ada konten review untuk dikirim.');
 
             const scrollWrapper = document.querySelector('.review-scroll-wrapper');
-            
             if (!scrollWrapper) return alert('Error: Wrapper scroll tidak ditemukan.');
 
             const originalWrapperOverflow = scrollWrapper.style.overflowX;
             const originalWrapperWidth = scrollWrapper.style.width;
 
             scrollWrapper.style.overflowX = 'visible';
-            scrollWrapper.style.width = 'fit-content'; 
+            scrollWrapper.style.width = 'fit-content';
             scrollWrapper.style.maxWidth = 'none';
 
             const renderScale = 3;
@@ -602,9 +610,9 @@
             try {
                 document.body.style.cursor = 'progress';
 
-                const fullWidth = captureRoot.scrollWidth; 
-                const fullHeight = captureRoot.scrollHeight; 
-                
+                const fullWidth = captureRoot.scrollWidth;
+                const fullHeight = captureRoot.scrollHeight;
+
                 const canvas = await html2canvas(captureRoot, {
                     scale: renderScale,
                     width: fullWidth,
@@ -614,63 +622,64 @@
                     backgroundColor: '#ffffff'
                 });
 
-                scrollWrapper.style.overflowX = originalWrapperOverflow;
-                scrollWrapper.style.width = originalWrapperWidth;
-                scrollWrapper.style.maxWidth = ''; 
-
-                function canvasToBlob(canvas, quality = 0.98) { 
-                    return new Promise(resolve => {
-                        canvas.toBlob(blob => resolve(blob), 'image/jpeg', quality);
-                    });
-                }
-
-                let blob = null;
-                try {
-                    blob = await canvasToBlob(canvas, 0.98); 
-                } catch (err) {
-                    console.error("toBlob failed, using DataURL fallback.", err);
-                    try {
-                        const dataURL = canvas.toDataURL('image/jpeg', 0.95); 
-                        const parts = dataURL.split(';base64,');
-                        const contentType = parts[0].split(':')[1];
-                        const raw = atob(parts[1]);
-                        const rawLength = raw.length;
-                        const u8 = new Uint8Array(rawLength);
-                        for (let i = 0; i < rawLength; ++i) u8[i] = raw.charCodeAt(i);
-                        blob = new Blob([u8], { type: contentType });
-                    } catch (e2) {
-                        console.error("DataURL fallback also failed.", e2);
-                        alert('Gagal membuat file JPG akhir: ' + (e2.message || e2));
-                        return;
-                    }
-                }
-
-                if (blob) {
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = `laporan_kompetitor_${Date.now()}.jpg`;
-                    document.body.appendChild(a);
-                    a.click();
-                    a.remove();
-                    URL.revokeObjectURL(url);
-                }
-
-            } catch (err) {
-                console.error("HTML2Canvas capture failed:", err);
-                alert('Gagal menangkap konten: ' + (err.message || err));
-            } finally {
-                document.body.style.cursor = '';
+                // Kembalikan style wrapper
                 scrollWrapper.style.overflowX = originalWrapperOverflow;
                 scrollWrapper.style.width = originalWrapperWidth;
                 scrollWrapper.style.maxWidth = '';
 
+                // Convert canvas ke Blob (JPEG berkualitas tinggi)
+                const blob = await new Promise(resolve => {
+                    canvas.toBlob(blob => resolve(blob), 'image/jpeg', 0.98);
+                });
+
+                if (!blob) {
+                    alert('Gagal membuat file gambar.');
+                    return;
+                }
+
+                // Buat File dari Blob
+                const file = new File([blob], `laporan_kompetitor_${Date.now()}.jpg`, { type: 'image/jpeg' });
+
+                // Cek apakah browser mendukung Web Share API (terutama mobile)
+                if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                    try {
+                        await navigator.share({
+                            files: [file],
+                            title: captionText,
+                            text: captionText
+                        });
+                    } catch (err) {
+                        if (err.name !== 'AbortError') {
+                            console.warn('Share gagal:', err);
+                        }
+                        // Fallback jika share dibatalkan atau gagal
+                        openWhatsAppWithCaption(captionText);
+                    }
+                } else {
+                    // Fallback untuk desktop atau browser tanpa share files
+                    openWhatsAppWithCaption(captionText);
+                }
+
+            } catch (err) {
+                console.error("Capture atau proses gambar gagal:", err);
+                alert('Gagal membuat gambar: ' + (err.message || err));
+            } finally {
+                document.body.style.cursor = '';
+
                 const notif = document.getElementById('notification');
                 if (notif) {
+                    notif.textContent = 'Sedang membuka WhatsApp...';
                     notif.classList.add('show');
-                    setTimeout(() => notif.classList.remove('show'), 2000);
+                    setTimeout(() => notif.classList.remove('show'), 3000);
                 }
             }
+        }
+
+        // Fallback: Buka WhatsApp dengan teks caption (user bisa attach gambar manual jika perlu)
+        function openWhatsAppWithCaption(caption) {
+            const encodedCaption = encodeURIComponent(caption);
+            const waUrl = `https://wa.me/?text=${encodedCaption}`;
+            window.open(waUrl, '_blank');
         }
     </script>
 </body>
