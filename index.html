@@ -16,13 +16,13 @@
             --light-bg:#fcfcfc;
             --pure-white:#ffffff;
             --success-color:#4CAF50;
-            --disabled-color: #9E9E9E; /* Warna baru untuk tombol disable */
+            --disabled-color: #9E9E9E;
         }
 
         body{
             font-family:'DM Sans',sans-serif;
             background:var(--light-bg);
-            /* Setup untuk full-screen (100vh) dan menempatkan Judul & Container secara vertikal */
+            /* Setup untuk full-screen (100vh) dan No-Scroll */
             display:flex;
             flex-direction: column; 
             justify-content: flex-start; 
@@ -32,18 +32,29 @@
             padding: 0;
             color:var(--dark-text);
             box-sizing: border-box;
+            overflow: hidden; 
+        }
+
+        /* Variabel untuk padding horizontal standar, agar konsisten */
+        .page-padding {
+            padding-left: 30px; 
+            padding-right: 30px;
         }
 
         h1{ 
-            text-align:center; 
-            background: none; 
+            text-align:left;
             color: var(--dark-primary); 
-            margin: 30px 0 0 0; 
-            padding: 0 20px; 
-            font-size:2.2em; 
+            /* Margin atas disesuaikan agar lebih mirip gambar (terlihat ada sedikit ruang di atas) */
+            margin: 40px 0 0 0; 
+            font-size:2.5em; /* Ukuran font judul sedikit diperbesar */
             font-weight:700; 
             width: 100%;
             max-width: 500px;
+            box-sizing: border-box;
+            flex-shrink: 0; 
+            /* Terapkan padding standar */
+            padding-left: 30px; 
+            padding-right: 30px;
         } 
 
         .container{ 
@@ -55,35 +66,41 @@
             flex-grow: 1; 
             display: flex;
             flex-direction: column;
+            /* Hapus padding dari container, pindahkan ke dashboard-content */
+            padding: 0; 
+            box-sizing: border-box;
+            min-height: 0; 
         }
 
         .dashboard-content{
-            padding: 25px 30px; 
-            text-align: center;
-            flex-grow: 1; 
-            display: flex;
-            flex-direction: column;
-            justify-content: center; 
-            align-items: center;
+            /* Tambahkan padding di sini, sesuai jarak judul ke konten */
+            padding: 20px 30px; 
+            text-align: left;
+            flex-grow: 0;
+            display: block;
         }
 
         .info-text {
-            margin-bottom: 35px; 
-            font-size: 1em; 
+            /* Margin bawah sedikit diperbesar agar ada jarak ke tombol */
+            margin-bottom: 25px; 
+            font-size: 1.1em;
+            line-height: 1.4;
             color: var(--dark-text);
-            padding: 0 10px;
+            padding: 0;
+            text-align: left;
         }
 
         .button-grid{
             display: flex;
             flex-direction: column;
             gap: 15px; 
-            width: 100%; 
-            max-width: 350px;
+            /* Hapus width/max-width agar tombol menyesuaikan isinya (fit-content) */
+            width: fit-content; 
         }
 
         .btn{ 
-            padding:15px 20px; 
+            /* Padding disesuaikan agar tombol 'Buat' tampak proporsional */
+            padding:12px 20px; 
             border:none; 
             font-weight:700; 
             text-transform: capitalize; 
@@ -91,10 +108,12 @@
             font-size: 1.1em; 
             transition: background-color 0.3s, transform 0.1s;
             text-decoration: none; 
-            display: block; 
+            /* Gunakan display:inline-block agar width:fit-content bisa bekerja */
+            display: inline-block; 
+            text-align: center;
         }
         
-        .btn:not(.disabled){ /* Hanya tombol yang tidak disabled yang punya cursor pointer */
+        .btn:not(.disabled){ 
              cursor: pointer;
         }
 
@@ -107,19 +126,24 @@
             transform: translateY(-2px);
         }
 
-        /* Gaya untuk tombol yang dinonaktifkan (disabled) */
         .btn.disabled{ 
-            background: var(--disabled-color); /* Menggunakan warna abu-abu */
-            color: #E0E0E0; /* Teks lebih terang */
+            background: var(--disabled-color); 
+            color: #E0E0E0; 
             opacity: 0.8;
-            pointer-events: none; /* Menonaktifkan klik pada tombol */
-            transform: none !important; /* Menghilangkan efek hover/transform */
+            pointer-events: none; 
+            transform: none !important; 
         }
 
-        /* MEDIA QUERY */
+        /* MEDIA QUERY: Penyesuaian untuk layar kecil */
         @media (max-width: 500px) {
-             h1 { font-size: 1.8em; margin-top: 20px; }
-             .dashboard-content { padding: 25px 20px; }
+             h1 { 
+                 font-size: 2.2em; /* Sedikit kecil di layar mobile */
+                 margin-top: 30px; /* Margin atas disesuaikan untuk layar kecil */
+                 padding: 0 20px; /* Padding sisi diperkecil */
+             }
+             .dashboard-content { 
+                 padding: 15px 20px; /* Padding sisi diperkecil */
+             }
         }
     </style>
 </head>
@@ -127,12 +151,10 @@
     <h1>Sales Counter</h1>
     <div class="container">
         <div class="dashboard-content">
-            <p class="info-text">Pilih jenis laporan yang ingin Anda akses:</p>
+            <p class="info-text">Laporan kompetitor dikerjakan tiap awal bulan dan kirim ke grup Sales Counter.</p>
 
             <div class="button-grid">
-                <a href="kompetitor.html" class="btn btn-competitor">Laporan Kompetitor</a>
-                
-                <a href="#" class="btn btn-sellout disabled" title="Halaman Sell-Out belum tersedia">Laporan Sell-Out</a>
+                <a href="kompetitor.html" class="btn btn-competitor">Buat</a>
             </div>
         </div>
     </div>
