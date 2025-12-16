@@ -469,11 +469,15 @@
                     </tr>
                 </thead>
                 <tbody>`;
+            
+            // Data SCI Paint dipisah 1 baris
+            html += `<tr class="group-sep"><td colspan="6">Data SCI Paint</td></tr>`;
 
             const scCount = scData.find(x=>x.nama_sc===currentData.nama_sc)?.jumlah_sc || 0;
             const sciPct = totalOmzet ? (Number(currentData.omzet_toko||0)/totalOmzet)*100 : null;
+            // PERUBAHAN: Menghapus tulisan "SCI Paint" di kolom Brand, hanya menyisakan produk yang dipilih.
             html += `<tr>
-                        <td><strong>Data SCI Paint</strong><br><small>${escapeHtml(currentData.produk_sci.join(', ')||'-')}</small></td>
+                        <td>${escapeHtml(currentData.produk_sci.join(', ')||'-')}</td>
                         <td>${escapeHtml(currentData.promo_berjalan_toko)||'-'}</td>
                         <td>${escapeHtml(currentData.syarat_ketentuan_toko)||'-'}</td>
                         <td class="right">${formatToRupiah(currentData.omzet_toko)}</td>
