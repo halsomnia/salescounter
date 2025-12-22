@@ -53,13 +53,11 @@
             transition: border-color 0.3s;
         }
 
-        /* Highlight error */
         input.error, textarea.error, select.error {
             border-color: var(--error-color) !important;
             box-shadow: 0 0 5px rgba(244,67,54,0.3);
         }
 
-        /* Error untuk grup produk SCI */
         #produk_sci_wrapper.error {
             border: 2px solid var(--error-color);
             border-radius: 4px;
@@ -68,10 +66,7 @@
         }
 
         .submit-container{ padding:20px 20px 30px; background:var(--section-bg); text-align:center; }
-        
-        /* PERBAIKAN: text-transform diubah dari uppercase menjadi capitalize */
         .btn{ padding:12px 20px; border:none; cursor:pointer; font-weight:700; text-transform:capitalize; }
-        
         .btn-success{ background:var(--dark-primary); color:#fff; }
         .btn-download{ background:var(--success-color); color:#fff; }
         .btn-remove{ background:var(--input-border); color:var(--dark-text); padding:6px 12px; font-weight:500; }
@@ -87,7 +82,6 @@
         .chip.active{ background:var(--dark-primary); color:#fff; border-color:var(--dark-primary); }
         .chip-group input[type="checkbox"]{ display:none; }
 
-        /* Review area & wide table */
         #review-container{ padding:20px 0; display:none; background:#fff; }
         .review-scroll-wrapper{ overflow-x:auto; width:100%; padding:10px 0; }
         #review-content-capture{ background:#fff; padding:10px 20px; }
@@ -95,19 +89,13 @@
         .id-table{ border-collapse:collapse; margin-bottom:12px; }
         .id-table td{ padding:6px 8px; vertical-align:top; }
 
-        .wide-table{ 
-            border-collapse:collapse; 
-            min-width:1277px; 
-            width:100%; 
-            table-layout:fixed; 
-        }
+        .wide-table{ border-collapse:collapse; min-width:1277px; width:100%; table-layout:fixed; }
         .wide-table th, .wide-table td{ border:1px solid #ddd; padding:8px; vertical-align:top; word-wrap:break-word; }
         .wide-table th{ background:var(--dark-primary); color:#fff; font-weight:700; text-align:center; } 
         .wide-table .right{ text-align:right; white-space:nowrap; }
         .wide-table .center{ text-align:center; white-space:nowrap; }
 
         .group-sep{ background:#fafafa; font-weight:700; text-align:left; }
-
         .grand-total-row td{ font-weight:800; background:#f3f3f3; }
 
         .review-actions{ text-align:center; padding:8px 20px; }
@@ -214,7 +202,6 @@
     </div>
 
     <script>
-        // DATA SC list
         const scData = [
             { nama_sc: "ACHMAD FAJAR NURSIDIQ", nama_toko: "MAKMUR MUDA", jumlah_sc: 1 },
             { nama_sc: "ADE IKHWAN FARID", nama_toko: "RUMAH WRN SEJAHTERA", jumlah_sc: 1 },
@@ -248,6 +235,7 @@
         ].sort((a,b)=> a.nama_sc.localeCompare(b.nama_sc));
 
         let kompetitorCount = 0;
+        let currentData = null;
 
         function setupChipToggle(){
             document.addEventListener('click', function(e){
@@ -257,8 +245,6 @@
                 if(!cb) return;
                 cb.checked = !cb.checked;
                 chip.classList.toggle('active', cb.checked);
-
-                // Hapus error pada produk SCI jika ada yang dipilih
                 const wrapper = document.getElementById('produk_sci_wrapper');
                 if (wrapper && document.querySelector('#produk_sci input:checked')) {
                     wrapper.classList.remove('error');
@@ -305,7 +291,6 @@
                         </select>
                         <input type="text" name="nama_kompetitor_input_${kompetitorCount}" id="nama_kompetitor_input_${kompetitorCount}" placeholder="Masukkan nama brand" style="margin-top:8px; display:none;" required>
                     </div>
-
                     <label></label>
                     <div class="omzet-sc-group">
                         <div class="input-wrapper">
@@ -318,15 +303,13 @@
                             <select name="jumlah_sc_kompetitor_${kompetitorCount}" required>
                                 <option value="" disabled selected>Pilih</option>
                                 <option value="0">Tidak Ada</option>
-								<option value="1">1</option><option value="2">2</option><option value="3">3</option>
+                                <option value="1">1</option><option value="2">2</option><option value="3">3</option>
                                 <option value="4">4</option><option value="5">5</option><option value="6">6</option>
                             </select>
                         </div>
                     </div>
-
                     <label>Promo yang berjalan</label>
                     <textarea name="promo_berjalan_kompetitor_${kompetitorCount}" rows="3"></textarea>
-
                     <label>Syarat & Ketentuan Promo</label>
                     <textarea name="syarat_ketentuan_kompetitor_${kompetitorCount}" rows="3"></textarea>
                 </div>
@@ -354,7 +337,6 @@
             }
         }
 
-        // Hapus class error saat input/change
         function clearErrorOnInput(){
             document.querySelectorAll('input, select, textarea').forEach(el => {
                 el.addEventListener('input', function(){ this.classList.remove('error'); });
@@ -365,11 +347,7 @@
         function validateForm(){
             let isValid = true;
             let firstError = null;
-
-            // Hapus semua error sebelumnya
             document.querySelectorAll('.error').forEach(el => el.classList.remove('error'));
-
-            // Validasi field utama
             const mainFields = ['bulan', 'nama_sc', 'kategori_toko', 'omzet_toko_display'];
             mainFields.forEach(id => {
                 const el = document.getElementById(id);
@@ -379,8 +357,6 @@
                     isValid = false;
                 }
             });
-
-            // Validasi Produk SCI (minimal 1 dipilih)
             const produkChecked = document.querySelectorAll('#produk_sci input:checked').length;
             if (produkChecked === 0) {
                 const wrapper = document.getElementById('produk_sci_wrapper');
@@ -388,41 +364,29 @@
                 if (!firstError) firstError = wrapper;
                 isValid = false;
             }
-
-            // Validasi setiap kompetitor
             document.querySelectorAll('.kompetitor-group').forEach(group => {
                 const selectBrand = group.querySelector('select[name^="nama_kompetitor_select_"]');
                 const inputBrand = group.querySelector('input[name^="nama_kompetitor_input_"]');
                 const omzetDisplay = group.querySelector('input[name^="omzet_kompetitor_display_"]');
                 const jumlahSC = group.querySelector('select[name^="jumlah_sc_kompetitor_"]');
-
-                let brandValue = '';
-                if (selectBrand.value === 'LAINNYA') {
-                    brandValue = inputBrand.value.trim();
-                } else {
-                    brandValue = selectBrand.value;
-                }
-
+                let brandValue = selectBrand.value === 'LAINNYA' ? inputBrand.value.trim() : selectBrand.value;
                 if (!brandValue) {
                     selectBrand.classList.add('error');
                     if (inputBrand.style.display !== 'none') inputBrand.classList.add('error');
                     if (!firstError) firstError = selectBrand;
                     isValid = false;
                 }
-
                 if (!omzetDisplay.value.trim()) {
                     omzetDisplay.classList.add('error');
                     if (!firstError) firstError = omzetDisplay;
                     isValid = false;
                 }
-
                 if (!jumlahSC.value) {
                     jumlahSC.classList.add('error');
                     if (!firstError) firstError = jumlahSC;
                     isValid = false;
                 }
             });
-
             if (!isValid) {
                 alert('Lengkapi Data');
                 if (firstError) {
@@ -430,93 +394,7 @@
                     if (firstError.focus) firstError.focus();
                 }
             }
-
             return isValid;
-        }
-
-        let currentData = null; // Untuk menyimpan data form saat review
-
-        function generateReview(){
-            if (!validateForm()) return;
-
-            currentData = collectFormData();
-            const cap = document.getElementById('review-content-capture');
-
-            let totalOmzet = Number(currentData.omzet_toko || 0);
-            let totalSc = Number(scData.find(x=>x.nama_sc===currentData.nama_sc)?.jumlah_sc || 0);
-            currentData.kompetitor.forEach(k=>{ totalOmzet += Number(k.omzet_kompetitor||0); totalSc += Number(k.jumlah_sc_kompetitor||0); });
-
-            const today = new Date();
-            const formattedDate = today.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
-            const scName = escapeHtml(currentData.nama_sc); 
-
-            let html = `<div style="text-align:center; background:var(--dark-primary); color:var(--pure-white); margin:-10px -20px 20px -20px; padding:20px; font-size:1.8em; font-weight:700; min-width:100%;">Laporan Kompetitor</div>`;
-
-            html += `<table class="id-table">
-                    <tr><td style="padding-right:18px; font-weight:700">Bulan</td><td>${escapeHtml(currentData.bulan)||'-'}</td><td style="padding-right:18px; font-weight:700">Sales Counter</td><td>${scName||'-'}</td></tr>
-                    <tr><td style="font-weight:700">Store</td><td>${escapeHtml(currentData.nama_toko)||'-'}</td><td style="font-weight:700">Kategori</td><td>${escapeHtml(currentData.kategori_toko)||'-'}</td></tr>
-                </table>`;
-
-            html += `<div style="overflow-x:auto;"><table class="wide-table">
-                <thead>
-                    <tr>
-                        <th style="min-width:315px">Brand</th> 
-                        <th style="min-width:450px">Promo yang berjalan</th> 
-                        <th style="min-width:550px">Syarat & Ketentuan Promo</th>
-                        <th style="width:160px; text-align:center">Omzet</th>
-                        <th style="width:120px; text-align:center">Jumlah SC</th>
-                        <th style="width:70px; text-align:center">%</th> 
-                    </tr>
-                </thead>
-                <tbody>`;
-            
-            // Data SCI Paint dipisah 1 baris
-            html += `<tr class="group-sep"><td colspan="6">Data SCI Paint</td></tr>`;
-
-            const scCount = scData.find(x=>x.nama_sc===currentData.nama_sc)?.jumlah_sc || 0;
-            const sciPct = totalOmzet ? (Number(currentData.omzet_toko||0)/totalOmzet)*100 : null;
-            // PERUBAHAN: Menghapus tulisan "SCI Paint" di kolom Brand, hanya menyisakan produk yang dipilih.
-            html += `<tr>
-                        <td>${escapeHtml(currentData.produk_sci.join(', ')||'-')}</td>
-                        <td>${escapeHtml(currentData.promo_berjalan_toko)||'-'}</td>
-                        <td>${escapeHtml(currentData.syarat_ketentuan_toko)||'-'}</td>
-                        <td class="right">${formatToRupiah(currentData.omzet_toko)}</td>
-                        <td class="center">${scCount}</td>
-                        <td class="center">${sciPct===null? '-' : `${round1(sciPct)}%`}</td>
-                    </tr>`;
-
-            html += `<tr class="group-sep"><td colspan="6">Data Kompetitor</td></tr>`;
-
-            currentData.kompetitor.forEach(k=>{
-                const pct = totalOmzet ? (Number(k.omzet_kompetitor||0)/totalOmzet)*100 : null;
-                html += `<tr>
-                            <td>${escapeHtml(k.nama_kompetitor)||'-'}</td>
-                            <td>${escapeHtml(k.promo_berjalan_kompetitor)||'-'}</td>
-                            <td>${escapeHtml(k.syarat_ketentuan_kompetitor)||'-'}</td>
-                            <td class="right">${formatToRupiah(k.omzet_kompetitor)}</td>
-                            <td class="center">${k.jumlah_sc_kompetitor||'-'}</td>
-                            <td class="center">${pct===null? '-' : `${round1(pct)}%`}</td>
-                         </tr>`;
-            });
-
-            html += `</tbody>
-                <tfoot>
-                    <tr class="grand-total-row">
-                        <td colspan="3" style="text-align:right">Grand Total</td>
-                        <td class="right">${formatToRupiah(totalOmzet)}</td>
-                        <td class="center">${totalSc}</td>
-                        <td class="center"></td> 
-                    </tr>
-                </tfoot>
-            </table></div>`;
-
-            html += `<div style="margin-top:20px; text-align:right; font-size:0.85em; font-style:italic; padding-right:10px;">
-                Laporan kompetitor ini dibuat oleh ${scName} pada tanggal ${formattedDate}.
-            </div>`;
-
-            cap.innerHTML = html;
-            document.getElementById('competitor-report-form').style.display = 'none';
-            document.getElementById('review-container').style.display = 'block';
         }
 
         function collectFormData(){
@@ -530,27 +408,16 @@
             d.promo_berjalan_toko = f.promo_berjalan_toko.value.trim();
             d.syarat_ketentuan_toko = f.syarat_ketentuan_toko.value.trim();
             d.produk_sci = Array.from(f.querySelectorAll('#produk_sci input:checked')).map(x=>x.value);
-
             d.kompetitor = [];
             document.querySelectorAll('.kompetitor-group').forEach(g=>{
                 const any = g.querySelector('select[name^="nama_kompetitor_select_"]');
                 if(!any) return;
-                const m = any.name.match(/_(\d+)$/);
-                if(!m) return;
-                const i = m[1];
-
+                const i = any.name.match(/_(\d+)$/)[1];
                 const sel = g.querySelector(`select[name="nama_kompetitor_select_${i}"]`);
                 const inpBrand = g.querySelector(`input[name="nama_kompetitor_input_${i}"]`);
-                let nama = '';
-                if(sel.value === 'LAINNYA' && inpBrand){
-                    nama = inpBrand.value.trim();
-                } else {
-                    nama = sel.value;
-                }
-
+                let nama = sel.value === 'LAINNYA' && inpBrand ? inpBrand.value.trim() : sel.value;
                 const omzetVal = Number(g.querySelector(`input[name="omzet_kompetitor_value_${i}"]`)?.value || 0);
                 const jumlahScVal = g.querySelector(`select[name="jumlah_sc_kompetitor_${i}"]`)?.value || '';
-
                 d.kompetitor.push({
                     nama_kompetitor: nama,
                     omzet_kompetitor: omzetVal,
@@ -559,8 +426,94 @@
                     syarat_ketentuan_kompetitor: g.querySelector(`textarea[name="syarat_ketentuan_kompetitor_${i}"]`)?.value.trim() || ''
                 });
             });
-
             return d;
+        }
+
+        async function simpanDataKeSheets() {
+            const scriptURL = 'https://script.google.com/macros/s/AKfycbxbsfNBSI4ao8EmpSUuBIfGdyH-_Q_UhYp-zsRySN_CMj-HFF5OW2m6ZKiwX-j_EG4EMw/exec'; // GANTI DENGAN URL WEB APP ANDA
+            currentData.jumlah_sc_kita = document.getElementById('sc_count_value').value;
+            try {
+                await fetch(scriptURL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(currentData)
+                });
+            } catch (err) {
+                console.error("Gagal mencatat ke Sheets:", err);
+            }
+        }
+
+        function generateReview(){
+            if (!validateForm()) return;
+            currentData = collectFormData();
+            const cap = document.getElementById('review-content-capture');
+            let totalOmzet = Number(currentData.omzet_toko || 0);
+            let totalSc = Number(scData.find(x=>x.nama_sc===currentData.nama_sc)?.jumlah_sc || 0);
+            currentData.kompetitor.forEach(k=>{ totalOmzet += Number(k.omzet_kompetitor||0); totalSc += Number(k.jumlah_sc_kompetitor||0); });
+
+            const today = new Date();
+            const formattedDate = today.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+            const scName = escapeHtml(currentData.nama_sc); 
+
+            let html = `<div style="text-align:center; background:var(--dark-primary); color:var(--pure-white); margin:-10px -20px 20px -20px; padding:20px; font-size:1.8em; font-weight:700; min-width:100%;">Laporan Kompetitor</div>`;
+            html += `<table class="id-table">
+                    <tr><td style="padding-right:18px; font-weight:700">Bulan</td><td>${escapeHtml(currentData.bulan)||'-'}</td><td style="padding-right:18px; font-weight:700">Sales Counter</td><td>${scName||'-'}</td></tr>
+                    <tr><td style="font-weight:700">Store</td><td>${escapeHtml(currentData.nama_toko)||'-'}</td><td style="font-weight:700">Kategori</td><td>${escapeHtml(currentData.kategori_toko)||'-'}</td></tr>
+                </table>`;
+            html += `<div style="overflow-x:auto;"><table class="wide-table">
+                <thead><tr>
+                    <th style="min-width:315px">Brand</th><th style="min-width:450px">Promo yang berjalan</th><th style="min-width:550px">Syarat & Ketentuan Promo</th>
+                    <th style="width:160px; text-align:center">Omzet</th><th style="width:120px; text-align:center">Jumlah SC</th><th style="width:70px; text-align:center">%</th> 
+                </tr></thead><tbody>`;
+            html += `<tr class="group-sep"><td colspan="6">Data SCI Paint</td></tr>`;
+            const scCount = scData.find(x=>x.nama_sc===currentData.nama_sc)?.jumlah_sc || 0;
+            const sciPct = totalOmzet ? (Number(currentData.omzet_toko||0)/totalOmzet)*100 : null;
+            html += `<tr><td>${escapeHtml(currentData.produk_sci.join(', ')||'-')}</td><td>${escapeHtml(currentData.promo_berjalan_toko)||'-'}</td><td>${escapeHtml(currentData.syarat_ketentuan_toko)||'-'}</td>
+                        <td class="right">${formatToRupiah(currentData.omzet_toko)}</td><td class="center">${scCount}</td><td class="center">${sciPct===null? '-' : `${round1(sciPct)}%`}</td></tr>`;
+            html += `<tr class="group-sep"><td colspan="6">Data Kompetitor</td></tr>`;
+            currentData.kompetitor.forEach(k=>{
+                const pct = totalOmzet ? (Number(k.omzet_kompetitor||0)/totalOmzet)*100 : null;
+                html += `<tr><td>${escapeHtml(k.nama_kompetitor)||'-'}</td><td>${escapeHtml(k.promo_berjalan_kompetitor)||'-'}</td><td>${escapeHtml(k.syarat_ketentuan_kompetitor)||'-'}</td>
+                            <td class="right">${formatToRupiah(k.omzet_kompetitor)}</td><td class="center">${k.jumlah_sc_kompetitor||'-'}</td><td class="center">${pct===null? '-' : `${round1(pct)}%`}</td></tr>`;
+            });
+            html += `</tbody><tfoot><tr class="grand-total-row"><td colspan="3" style="text-align:right">Grand Total</td><td class="right">${formatToRupiah(totalOmzet)}</td><td class="center">${totalSc}</td><td class="center"></td></tr></tfoot></table></div>`;
+            html += `<div style="margin-top:20px; text-align:right; font-size:0.85em; font-style:italic; padding-right:10px;">Laporan kompetitor ini dibuat oleh ${scName} pada tanggal ${formattedDate}.</div>`;
+            cap.innerHTML = html;
+            document.getElementById('competitor-report-form').style.display = 'none';
+            document.getElementById('review-container').style.display = 'block';
+        }
+
+        async function sendToWhatsApp() {
+            if (!currentData) return;
+            simpanDataKeSheets();
+            const captionText = `Laporan kompetitor bulan ${currentData.bulan} - ${currentData.nama_sc}, ${currentData.nama_toko}`;
+            const captureRoot = document.getElementById('review-content-capture');
+            const scrollWrapper = document.querySelector('.review-scroll-wrapper');
+            const originalWrapperOverflow = scrollWrapper.style.overflowX;
+            const originalWrapperWidth = scrollWrapper.style.width;
+            scrollWrapper.style.overflowX = 'visible';
+            scrollWrapper.style.width = 'fit-content';
+            scrollWrapper.style.maxWidth = 'none';
+            try {
+                document.body.style.cursor = 'progress';
+                const canvas = await html2canvas(captureRoot, { scale: 3, useCORS: true, allowTaint: true, backgroundColor: '#ffffff' });
+                scrollWrapper.style.overflowX = originalWrapperOverflow;
+                scrollWrapper.style.width = originalWrapperWidth;
+                const blob = await new Promise(resolve => canvas.toBlob(blob => resolve(blob), 'image/jpeg', 0.98));
+                const file = new File([blob], `laporan_${Date.now()}.jpg`, { type: 'image/jpeg' });
+                if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                    await navigator.share({ files: [file], title: captionText, text: captionText });
+                } else {
+                    window.open(`https://wa.me/?text=${encodeURIComponent(captionText)}`, '_blank');
+                }
+            } catch (err) {
+                console.error(err);
+            } finally {
+                document.body.style.cursor = '';
+                const notif = document.getElementById('notification');
+                if (notif) { notif.classList.add('show'); setTimeout(() => notif.classList.remove('show'), 3000); }
+            }
         }
 
         function editData(){ 
@@ -585,107 +538,6 @@
             setupChipToggle();
             clearErrorOnInput();
         });
-
-        // ================================================
-        // Kirim ke WhatsApp - HIGH QUALITY JPG dengan teks caption
-        // ================================================
-        async function sendToWhatsApp() {
-            if (!currentData) {
-                alert('Data belum di-review. Silakan review data terlebih dahulu.');
-                return;
-            }
-
-            const captionText = `Laporan kompetitor bulan ${currentData.bulan} - ${currentData.nama_sc}, ${currentData.nama_toko}`;
-
-            const captureRoot = document.getElementById('review-content-capture');
-            if (!captureRoot) return alert('Tidak ada konten review untuk dikirim.');
-
-            const scrollWrapper = document.querySelector('.review-scroll-wrapper');
-            if (!scrollWrapper) return alert('Error: Wrapper scroll tidak ditemukan.');
-
-            const originalWrapperOverflow = scrollWrapper.style.overflowX;
-            const originalWrapperWidth = scrollWrapper.style.width;
-
-            scrollWrapper.style.overflowX = 'visible';
-            scrollWrapper.style.width = 'fit-content';
-            scrollWrapper.style.maxWidth = 'none';
-
-            const renderScale = 3;
-
-            try {
-                document.body.style.cursor = 'progress';
-
-                const fullWidth = captureRoot.scrollWidth;
-                const fullHeight = captureRoot.scrollHeight;
-
-                const canvas = await html2canvas(captureRoot, {
-                    scale: renderScale,
-                    width: fullWidth,
-                    height: fullHeight,
-                    useCORS: true,
-                    allowTaint: true,
-                    backgroundColor: '#ffffff'
-                });
-
-                // Kembalikan style wrapper
-                scrollWrapper.style.overflowX = originalWrapperOverflow;
-                scrollWrapper.style.width = originalWrapperWidth;
-                scrollWrapper.style.maxWidth = '';
-
-                // Convert canvas ke Blob (JPEG berkualitas tinggi)
-                const blob = await new Promise(resolve => {
-                    canvas.toBlob(blob => resolve(blob), 'image/jpeg', 0.98);
-                });
-
-                if (!blob) {
-                    alert('Gagal membuat file gambar.');
-                    return;
-                }
-
-                // Buat File dari Blob
-                const file = new File([blob], `laporan_kompetitor_${Date.now()}.jpg`, { type: 'image/jpeg' });
-
-                // Cek apakah browser mendukung Web Share API (terutama mobile)
-                if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                    try {
-                        await navigator.share({
-                            files: [file],
-                            title: captionText,
-                            text: captionText
-                        });
-                    } catch (err) {
-                        if (err.name !== 'AbortError') {
-                            console.warn('Share gagal:', err);
-                        }
-                        // Fallback jika share dibatalkan atau gagal
-                        openWhatsAppWithCaption(captionText);
-                    }
-                } else {
-                    // Fallback untuk desktop atau browser tanpa share files
-                    openWhatsAppWithCaption(captionText);
-                }
-
-            } catch (err) {
-                console.error("Capture atau proses gambar gagal:", err);
-                alert('Gagal membuat gambar: ' + (err.message || err));
-            } finally {
-                document.body.style.cursor = '';
-
-                const notif = document.getElementById('notification');
-                if (notif) {
-                    notif.textContent = 'Sedang membuka WhatsApp...';
-                    notif.classList.add('show');
-                    setTimeout(() => notif.classList.remove('show'), 3000);
-                }
-            }
-        }
-
-        // Fallback: Buka WhatsApp dengan teks caption (user bisa attach gambar manual jika perlu)
-        function openWhatsAppWithCaption(caption) {
-            const encodedCaption = encodeURIComponent(caption);
-            const waUrl = `https://wa.me/?text=${encodedCaption}`;
-            window.open(waUrl, '_blank');
-        }
     </script>
 </body>
 </html>
