@@ -36,7 +36,6 @@
 
         .container{ background:var(--pure-white); max-width:900px; width:100%; overflow:hidden; }
         
-        /* Tambahkan ID nanti di HTML agar bisa di-toggle */
         h1{ text-align:center; background:var(--dark-primary); color:#fff; margin:0; padding:20px; font-size:1.8em; font-weight:700; } 
 
         .form-grid{ display:grid; grid-template-columns:1fr 2fr; gap:10px 20px; align-items:center; }
@@ -103,10 +102,45 @@
         .review-actions{ text-align:center; padding:8px 20px; }
         .review-actions .btn{ margin:6px 8px; }
 
-        .notification{ visibility:hidden; min-width:250px; margin-left:-125px; background:var(--success-color); color:#fff; text-align:center; border-radius:4px; padding:16px; position:fixed; left:50%; bottom:30px; z-index:1000; opacity:0; transition:opacity .4s, bottom .4s; }
-        .notification.show{ visibility:visible; opacity:1; bottom:50px; }
+        /* UI NOTIFIKASI BARU */
+        .notification {
+            visibility: hidden;
+            min-width: 280px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 50px;
+            padding: 12px 24px;
+            position: fixed;
+            z-index: 3000;
+            left: 50%;
+            bottom: 40px;
+            transform: translateX(-50%) translateY(20px);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .notification.show {
+            visibility: visible;
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+        .notification-icon {
+            background: var(--success-color);
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
 
-        /* --- Styles untuk Custom Modal Konfirmasi --- */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.5); z-index: 2000;
@@ -228,11 +262,14 @@
 
             <div class="review-actions">
                 <button type="button" class="btn btn-primary" onclick="editData()">Koreksi Data</button>
-                <button type="button" class="btn btn-download" onclick="sendToWhatsApp()">Kirim ke WA</button>
+                <button type="button" class="btn btn-download" onclick="sendToWhatsApp()">Simpan ke Galeri</button>
             </div>
         </div>
 
-        <div id="notification" class="notification">Sedang membuka WhatsApp...</div>
+        <div id="notification" class="notification">
+            <div class="notification-icon">✓</div>
+            <span>Laporan tersimpan ke galeri Anda</span>
+        </div>
         
         <div id="confirmation-modal" class="modal-overlay">
             <div class="modal-box">
@@ -240,10 +277,10 @@
                     <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
                 </div>
                 <h3 class="modal-title">Konfirmasi Data</h3>
-                <p class="modal-text">Apakah data laporan sudah benar dan siap untuk dikirimkan?</p>
+                <p class="modal-text">Apakah data laporan sudah benar dan siap untuk disimpan?</p>
                 <div class="modal-actions">
                     <button type="button" class="btn btn-outline" onclick="closeModal()">Cek Lagi</button>
-                    <button type="button" class="btn btn-download" onclick="executeSend()">Ya, Kirim</button>
+                    <button type="button" class="btn btn-download" onclick="executeSend()">Ya, Simpan</button>
                 </div>
             </div>
         </div>
@@ -264,7 +301,6 @@
             { nama_sc: "EVI YULIA", nama_toko: "SUMBER REJEKI", jumlah_sc: 1 },
             { nama_sc: "FAHMI NUR FARIDA", nama_toko: "DEPO SS GARUT", jumlah_sc: 1 },
             { nama_sc: "FITRIA NUROHMAH", nama_toko: "TUNAS BANGUNAN TJS", jumlah_sc: 1 },
-            //{ nama_sc: "HAFIZ AZMI", nama_toko: "KEBON KOLOT PD", jumlah_sc: 1 },
             { nama_sc: "ISNI SUSANTI", nama_toko: "BERDIKARI CIANJUR", jumlah_sc: 1 },
             { nama_sc: "IWAN SOLEH", nama_toko: "MAREMA HADE SRJ", jumlah_sc: 1 },
             { nama_sc: "JUAN", nama_toko: "MAKMUR", jumlah_sc: 1 },
@@ -340,13 +376,13 @@
                         <input type="text" name="nama_kompetitor_input_${kompetitorCount}" id="nama_kompetitor_input_${kompetitorCount}" placeholder="Masukkan nama brand" style="margin-top:8px; display:none;" required>
                     </div>
                     <label></label>
-                    <div class="omzet-sc-group">
-                        <div class="input-wrapper">
+                    <div class="omzet-sc-group" style="display:flex; gap:10px;">
+                        <div class="input-wrapper" style="flex:2">
                             <label>Omzet</label>
                             <input type="text" name="omzet_kompetitor_display_${kompetitorCount}" onkeyup="formatRupiah(this, 'omzet_kompetitor_value_${kompetitorCount}')" required>
                             <input type="hidden" name="omzet_kompetitor_value_${kompetitorCount}">
                         </div>
-                        <div class="input-wrapper">
+                        <div class="input-wrapper" style="flex:1">
                             <label>Jumlah SC</label>
                             <select name="jumlah_sc_kompetitor_${kompetitorCount}" required>
                                 <option value="" disabled selected>Pilih</option>
@@ -504,10 +540,8 @@
                 totalSc += Number(k.jumlah_sc_kompetitor||0); 
             });
 
-            // Data gabungan untuk sorting
             let dataList = [];
             
-            // Masukkan data SCI
             const sciScCount = scData.find(x=>x.nama_sc===currentData.nama_sc)?.jumlah_sc || 0;
             const sciPct = totalOmzet ? (Number(currentData.omzet_toko||0)/totalOmzet)*100 : 0;
             dataList.push({
@@ -519,7 +553,6 @@
                 percent: sciPct
             });
 
-            // Masukkan data Kompetitor
             currentData.kompetitor.forEach(k => {
                 const kPct = totalOmzet ? (Number(k.omzet_kompetitor||0)/totalOmzet)*100 : 0;
                 dataList.push({
@@ -532,7 +565,6 @@
                 });
             });
 
-            // Urutkan berdasarkan persentase tertinggi
             dataList.sort((a, b) => b.percent - a.percent);
 
             const today = new Date();
@@ -566,11 +598,8 @@
             
             cap.innerHTML = html;
             
-            // Sembunyikan form
             document.getElementById('competitor-report-form').style.display = 'none';
-            // Sembunyikan Judul Utama Halaman agar tidak double
             document.getElementById('main-title').style.display = 'none';
-            // Tampilkan container review
             document.getElementById('review-container').style.display = 'block';
         }
 
@@ -587,7 +616,6 @@
             closeModal(); 
             
             simpanDataKeSheets();
-            const captionText = `Laporan kompetitor bulan ${currentData.bulan} - ${currentData.nama_sc}, ${currentData.nama_toko}`;
             const captureRoot = document.getElementById('review-content-capture');
             const scrollWrapper = document.querySelector('.review-scroll-wrapper');
             const originalWrapperOverflow = scrollWrapper.style.overflowX;
@@ -600,29 +628,35 @@
             try {
                 document.body.style.cursor = 'progress';
                 const canvas = await html2canvas(captureRoot, { scale: 3, useCORS: true, allowTaint: true, backgroundColor: '#ffffff' });
+                
                 scrollWrapper.style.overflowX = originalWrapperOverflow;
                 scrollWrapper.style.width = originalWrapperWidth;
-                const blob = await new Promise(resolve => canvas.toBlob(blob => resolve(blob), 'image/jpeg', 0.98));
-                const file = new File([blob], `laporan_${Date.now()}.jpg`, { type: 'image/jpeg' });
-                
-                if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                    await navigator.share({ files: [file], title: captionText, text: captionText });
-                } else {
-                    window.open(`https://wa.me/?text=${encodeURIComponent(captionText)}`, '_blank');
+
+                const imageData = canvas.toDataURL('image/jpeg', 0.98);
+                const link = document.createElement('a');
+                link.href = imageData;
+                link.download = `Laporan_Kompetitor_${currentData.nama_sc}_${currentData.bulan}.jpg`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+                // Tampilkan notifikasi bagus
+                const notif = document.getElementById('notification');
+                if (notif) { 
+                    notif.classList.add('show'); 
+                    setTimeout(() => notif.classList.remove('show'), 3500); 
                 }
             } catch (err) {
                 console.error(err);
+                alert("Gagal menyimpan gambar");
             } finally {
                 document.body.style.cursor = '';
-                const notif = document.getElementById('notification');
-                if (notif) { notif.classList.add('show'); setTimeout(() => notif.classList.remove('show'), 3000); }
             }
         }
 
         function editData(){ 
             document.getElementById('competitor-report-form').style.display = 'block'; 
             document.getElementById('review-container').style.display = 'none'; 
-            // Munculkan kembali Judul Utama saat edit
             document.getElementById('main-title').style.display = 'block';
         }
 
@@ -646,4 +680,3 @@
     </script>
 </body>
 </html>
-
