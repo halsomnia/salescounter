@@ -35,6 +35,8 @@
         }
 
         .container{ background:var(--pure-white); max-width:900px; width:100%; overflow:hidden; }
+        
+        /* Tambahkan ID nanti di HTML agar bisa di-toggle */
         h1{ text-align:center; background:var(--dark-primary); color:#fff; margin:0; padding:20px; font-size:1.8em; font-weight:700; } 
 
         .form-grid{ display:grid; grid-template-columns:1fr 2fr; gap:10px 20px; align-items:center; }
@@ -104,6 +106,38 @@
         .notification{ visibility:hidden; min-width:250px; margin-left:-125px; background:var(--success-color); color:#fff; text-align:center; border-radius:4px; padding:16px; position:fixed; left:50%; bottom:30px; z-index:1000; opacity:0; transition:opacity .4s, bottom .4s; }
         .notification.show{ visibility:visible; opacity:1; bottom:50px; }
 
+        /* --- Styles untuk Custom Modal Konfirmasi --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.5); z-index: 2000;
+            display: flex; justify-content: center; align-items: center;
+            opacity: 0; visibility: hidden; transition: all 0.3s ease;
+            backdrop-filter: blur(2px);
+        }
+        .modal-overlay.show { opacity: 1; visibility: visible; }
+        
+        .modal-box {
+            background: #fff; width: 90%; max-width: 400px;
+            padding: 25px; border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            transform: translateY(20px); transition: transform 0.3s ease;
+            text-align: center;
+        }
+        .modal-overlay.show .modal-box { transform: translateY(0); }
+        
+        .modal-icon {
+            width: 60px; height: 60px; background: #e8f5e9; color: var(--success-color);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 15px; font-size: 30px;
+        }
+        .modal-title { margin: 0 0 10px; color: var(--dark-primary); font-size: 1.4em; font-weight: 700; }
+        .modal-text { color: var(--dark-text); margin-bottom: 25px; font-size: 0.95em; line-height: 1.5; }
+        
+        .modal-actions { display: flex; gap: 10px; justify-content: center; }
+        .modal-actions .btn { flex: 1; border-radius: 8px; padding: 12px; }
+        .btn-outline { background: transparent; border: 1px solid #ccc; color: #666; }
+        .btn-outline:hover { background: #f5f5f5; }
+
         @media (max-width:768px){
             .form-grid{ grid-template-columns:1fr; }
             .form-grid label{ text-align:left; }
@@ -114,7 +148,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>Laporan Kompetitor</h1>
+        <h1 id="main-title">Laporan Kompetitor</h1>
 
         <form id="competitor-report-form">
             <div id="data-identitas" class="data-section">
@@ -199,6 +233,20 @@
         </div>
 
         <div id="notification" class="notification">Sedang membuka WhatsApp...</div>
+        
+        <div id="confirmation-modal" class="modal-overlay">
+            <div class="modal-box">
+                <div class="modal-icon">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                </div>
+                <h3 class="modal-title">Konfirmasi Data</h3>
+                <p class="modal-text">Apakah data laporan sudah benar dan siap untuk dikirimkan?</p>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-outline" onclick="closeModal()">Cek Lagi</button>
+                    <button type="button" class="btn btn-download" onclick="executeSend()">Ya, Kirim</button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -430,7 +478,7 @@
         }
 
         async function simpanDataKeSheets() {
-            const scriptURL = 'https://script.google.com/macros/s/AKfycbxbsfNBSI4ao8EmpSUuBIfGdyH-_Q_UhYp-zsRySN_CMj-HFF5OW2m6ZKiwX-j_EG4EMw/exec'; // GANTI DENGAN URL WEB APP ANDA
+            const scriptURL = 'https://script.google.com/macros/s/AKfycbxbsfNBSI4ao8EmpSUuBIfGdyH-_Q_UhYp-zsRySN_CMj-HFF5OW2m6ZKiwX-j_EG4EMw/exec'; 
             currentData.jumlah_sc_kita = document.getElementById('sc_count_value').value;
             try {
                 await fetch(scriptURL, {
@@ -448,9 +496,44 @@
             if (!validateForm()) return;
             currentData = collectFormData();
             const cap = document.getElementById('review-content-capture');
+            
             let totalOmzet = Number(currentData.omzet_toko || 0);
             let totalSc = Number(scData.find(x=>x.nama_sc===currentData.nama_sc)?.jumlah_sc || 0);
-            currentData.kompetitor.forEach(k=>{ totalOmzet += Number(k.omzet_kompetitor||0); totalSc += Number(k.jumlah_sc_kompetitor||0); });
+            currentData.kompetitor.forEach(k=>{ 
+                totalOmzet += Number(k.omzet_kompetitor||0); 
+                totalSc += Number(k.jumlah_sc_kompetitor||0); 
+            });
+
+            // Data gabungan untuk sorting
+            let dataList = [];
+            
+            // Masukkan data SCI
+            const sciScCount = scData.find(x=>x.nama_sc===currentData.nama_sc)?.jumlah_sc || 0;
+            const sciPct = totalOmzet ? (Number(currentData.omzet_toko||0)/totalOmzet)*100 : 0;
+            dataList.push({
+                nama: currentData.produk_sci.join(', ') || '-',
+                promo: currentData.promo_berjalan_toko || '-',
+                syarat: currentData.syarat_ketentuan_toko || '-',
+                omzet: currentData.omzet_toko,
+                scCount: sciScCount,
+                percent: sciPct
+            });
+
+            // Masukkan data Kompetitor
+            currentData.kompetitor.forEach(k => {
+                const kPct = totalOmzet ? (Number(k.omzet_kompetitor||0)/totalOmzet)*100 : 0;
+                dataList.push({
+                    nama: k.nama_kompetitor || '-',
+                    promo: k.promo_berjalan_kompetitor || '-',
+                    syarat: k.syarat_ketentuan_kompetitor || '-',
+                    omzet: k.omzet_kompetitor,
+                    scCount: k.jumlah_sc_kompetitor || 0,
+                    percent: kPct
+                });
+            });
+
+            // Urutkan berdasarkan persentase tertinggi
+            dataList.sort((a, b) => b.percent - a.percent);
 
             const today = new Date();
             const formattedDate = today.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
@@ -466,35 +549,54 @@
                     <th style="min-width:315px">Brand</th><th style="min-width:450px">Promo yang berjalan</th><th style="min-width:550px">Syarat & Ketentuan Promo</th>
                     <th style="width:160px; text-align:center">Omzet</th><th style="width:120px; text-align:center">Jumlah SC</th><th style="width:70px; text-align:center">%</th> 
                 </tr></thead><tbody>`;
-            html += `<tr class="group-sep"><td colspan="6">Data SCI Paint</td></tr>`;
-            const scCount = scData.find(x=>x.nama_sc===currentData.nama_sc)?.jumlah_sc || 0;
-            const sciPct = totalOmzet ? (Number(currentData.omzet_toko||0)/totalOmzet)*100 : null;
-            html += `<tr><td>${escapeHtml(currentData.produk_sci.join(', ')||'-')}</td><td>${escapeHtml(currentData.promo_berjalan_toko)||'-'}</td><td>${escapeHtml(currentData.syarat_ketentuan_toko)||'-'}</td>
-                        <td class="right">${formatToRupiah(currentData.omzet_toko)}</td><td class="center">${scCount}</td><td class="center">${sciPct===null? '-' : `${round1(sciPct)}%`}</td></tr>`;
-            html += `<tr class="group-sep"><td colspan="6">Data Kompetitor</td></tr>`;
-            currentData.kompetitor.forEach(k=>{
-                const pct = totalOmzet ? (Number(k.omzet_kompetitor||0)/totalOmzet)*100 : null;
-                html += `<tr><td>${escapeHtml(k.nama_kompetitor)||'-'}</td><td>${escapeHtml(k.promo_berjalan_kompetitor)||'-'}</td><td>${escapeHtml(k.syarat_ketentuan_kompetitor)||'-'}</td>
-                            <td class="right">${formatToRupiah(k.omzet_kompetitor)}</td><td class="center">${k.jumlah_sc_kompetitor||'-'}</td><td class="center">${pct===null? '-' : `${round1(pct)}%`}</td></tr>`;
+
+            dataList.forEach(item => {
+                html += `<tr>
+                            <td>${escapeHtml(item.nama)}</td>
+                            <td>${escapeHtml(item.promo)}</td>
+                            <td>${escapeHtml(item.syarat)}</td>
+                            <td class="right">${formatToRupiah(item.omzet)}</td>
+                            <td class="center">${item.scCount}</td>
+                            <td class="center">${totalOmzet === 0 ? '-' : round1(item.percent) + '%'}</td>
+                         </tr>`;
             });
+
             html += `</tbody><tfoot><tr class="grand-total-row"><td colspan="3" style="text-align:right">Grand Total</td><td class="right">${formatToRupiah(totalOmzet)}</td><td class="center">${totalSc}</td><td class="center"></td></tr></tfoot></table></div>`;
             html += `<div style="margin-top:20px; text-align:right; font-size:0.85em; font-style:italic; padding-right:10px;">Laporan kompetitor ini dibuat oleh ${scName} pada tanggal ${formattedDate}.</div>`;
+            
             cap.innerHTML = html;
+            
+            // Sembunyikan form
             document.getElementById('competitor-report-form').style.display = 'none';
+            // Sembunyikan Judul Utama Halaman agar tidak double
+            document.getElementById('main-title').style.display = 'none';
+            // Tampilkan container review
             document.getElementById('review-container').style.display = 'block';
         }
 
-        async function sendToWhatsApp() {
+        function sendToWhatsApp() {
             if (!currentData) return;
+            document.getElementById('confirmation-modal').classList.add('show');
+        }
+
+        function closeModal() {
+            document.getElementById('confirmation-modal').classList.remove('show');
+        }
+
+        async function executeSend() {
+            closeModal(); 
+            
             simpanDataKeSheets();
             const captionText = `Laporan kompetitor bulan ${currentData.bulan} - ${currentData.nama_sc}, ${currentData.nama_toko}`;
             const captureRoot = document.getElementById('review-content-capture');
             const scrollWrapper = document.querySelector('.review-scroll-wrapper');
             const originalWrapperOverflow = scrollWrapper.style.overflowX;
             const originalWrapperWidth = scrollWrapper.style.width;
+            
             scrollWrapper.style.overflowX = 'visible';
             scrollWrapper.style.width = 'fit-content';
             scrollWrapper.style.maxWidth = 'none';
+            
             try {
                 document.body.style.cursor = 'progress';
                 const canvas = await html2canvas(captureRoot, { scale: 3, useCORS: true, allowTaint: true, backgroundColor: '#ffffff' });
@@ -502,6 +604,7 @@
                 scrollWrapper.style.width = originalWrapperWidth;
                 const blob = await new Promise(resolve => canvas.toBlob(blob => resolve(blob), 'image/jpeg', 0.98));
                 const file = new File([blob], `laporan_${Date.now()}.jpg`, { type: 'image/jpeg' });
+                
                 if (navigator.canShare && navigator.canShare({ files: [file] })) {
                     await navigator.share({ files: [file], title: captionText, text: captionText });
                 } else {
@@ -519,6 +622,8 @@
         function editData(){ 
             document.getElementById('competitor-report-form').style.display = 'block'; 
             document.getElementById('review-container').style.display = 'none'; 
+            // Munculkan kembali Judul Utama saat edit
+            document.getElementById('main-title').style.display = 'block';
         }
 
         function formatRupiah(inp, hidNameOrId){
