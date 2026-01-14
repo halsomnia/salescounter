@@ -9,175 +9,302 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
 
-	<link rel="icon" type="image/png" href="favicon.png">
-
     <style>
-        body{
-            margin:0;
-            font-family:'DM Sans', sans-serif;
-            background:#fff;
-            color:#000000;
+        :root {
+            --bg-body: #f8f9fa;
+            --text-main: #121212;
+            --text-muted: #6c757d;
+            --accent: #000000;
+            --card-bg: #ffffff;
+            --border: #ececec;
         }
 
-        /* HEADER */
-        .header{
-            background:#000;
-            color:#fff;
-            padding:40px 30px; 
+        body {
+            margin: 0;
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg-body);
+            color: var(--text-main);
+            -webkit-font-smoothing: antialiased;
+            line-height: 1.6;
         }
 
-        .header h1{
-            margin:0;
-            font-size:2.1em; 
-            font-weight:700;
+        /* HEADER - REDUCED SIZE */
+        .header {
+            background: var(--accent);
+            color: #fff;
+            padding: 35px 20px; /* Diperkecil dari versi sebelumnya */
         }
 
-        /* SECTIONS (diubah menjadi list item) */
-        .list-section {
-            padding: 0 30px;
-            list-style: none;
-        }
-        
-        /* Container untuk setiap item */
-        .list-item {
-            display: flex; 
-            /* UBAH KE MIDDLE ALIGN (CENTER): Ini akan membuat konten teks (Brosur dan Form) rata tengah vertikal */
-            align-items: center; 
-            justify-content: space-between; 
-            padding: 16px 0; 
-            border-bottom: 1px solid #e0e0e0; 
+        .header-inner {
+            max-width: 800px;
+            margin: 0 auto;
         }
 
-        /* KHUSUS UNTUK ITEM LAPORAN KOMPETITOR */
-        /* Karena item ini memiliki dua baris (Title dan Desc), align-items: center mungkin kurang ideal jika teks deskripsi sangat panjang. 
-           Jika Anda ingin Laporan Kompetitor tetap align-top (seperti saat wrap), gunakan align-items: flex-start pada media query. 
-           Namun, untuk konsistensi, kita biarkan align-items: center di desktop, dan disesuaikan di mobile. */
-        
-        .list-item:first-child {
-            border-top: 1px solid #e0e0e0; 
+        .header h1 {
+            margin: 0;
+            font-size: 1.5rem; /* Ukuran font lebih proporsional */
+            font-weight: 700;
+            letter-spacing: -0.5px;
         }
-        
-        .list-item-content {
-            flex-grow: 1; 
-            padding-right: 15px; 
+
+        .header p {
+            margin: 4px 0 0;
+            opacity: 0.6;
+            font-size: 0.85rem;
         }
-        
-        /* Link di dalam list item */
-        .list-item a.link {
-            color: #000000;
-            text-decoration: none;
-            font-size: 1.2em; 
-            font-weight: 500;
+
+        /* MAIN CONTAINER */
+        .content-container {
+            max-width: 800px;
+            margin: -15px auto 40px; /* Penyesuaian offset agar tetap rapi */
+            padding: 0 15px;
+        }
+
+        /* ACCORDION SECTION */
+        .category-wrapper {
+            background: var(--card-bg);
+            border-radius: 12px;
+            margin-bottom: 10px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .category-wrapper.active {
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+        }
+
+        .category-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px 24px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .category-header h2 {
+            margin: 0;
+            font-size: 1rem;
+            font-weight: 700;
+        }
+
+        .plus-icon {
+            font-size: 1.1rem;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            color: var(--text-muted);
+        }
+
+        .category-wrapper.active .plus-icon {
+            transform: rotate(45deg);
+        }
+
+        .sub-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            background: #fff;
+        }
+
+        .category-wrapper.active .sub-content {
+            max-height: 800px;
+        }
+
+        .job-list {
+            padding: 0 24px 18px;
+        }
+
+        .job-item {
+            padding: 14px 0;
+            border-top: 1px solid var(--border);
+        }
+
+        .job-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        .job-desc {
+            font-size: 0.85rem;
+            color: var(--text-muted);
             display: block;
         }
 
-        /* Kelas .title diubah agar tidak bertabrakan, meskipun sudah diganti dengan a.link di HTML */
-        .title{
-            font-size:1.2em;
+        .btn-action {
+            display: inline-flex;
+            align-items: center;
+            background: var(--accent);
+            color: #fff;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            margin-top: 12px;
+            font-size: 0.8rem;
             font-weight: 500;
-            color:#000000;
-            margin: 0; 
-            /* Diganti di item list ketiga dengan a.link */
+            transition: transform 0.2s;
         }
 
-        .desc{
-            margin-top:2px; 
-            font-size:0.8em;
-            color:#707070; 
-            line-height:1.4;
+        /* DOWNLOAD SECTION - COMPACT */
+        .download-section {
+            margin-top: 25px;
+            padding: 10px;
         }
 
-        /* Tombol panah (Arrow Button) - Ukuran seragam 40x40px */
-        .arrow-btn {
-            background: #e0e0e0; 
-            border-radius: 50%; 
-            width: 40px; 
-            min-width: 40px; 
-            height: 40px;
-            min-height: 40px; 
-            
+        .download-label {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            display: block;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .download-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 0; 
+        }
+
+        .download-link {
             display: flex;
             align-items: center;
-            justify-content: center;
+            padding: 8px 0;
+            color: var(--text-main);
             text-decoration: none;
-            margin-left: 15px;
-            
-            font-size: 1.2em;
-            color: #000000;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: opacity 0.2s ease;
         }
 
-        .arrow-btn:hover {
-            background: #cccccc; 
-        }
-        
-        /* Hide the original .btn */
-        .btn {
-            display: none !important;
+        .download-link:hover {
+            opacity: 0.5;
         }
 
-        /* Media Query untuk Mobile */
-        @media(max-width:500px){
-            .header h1{
-                font-size:1.9em;
-            }
-            .list-item a.link,
-            .title{
-                font-size:1.1em;
-            }
-            /* Pastikan Laporan Kompetitor (yang memiliki deskripsi panjang dan multi-baris) 
-               tetap align-top di mobile agar lebih rapi */
-            .list-item:nth-child(3) {
-                align-items: flex-start;
-            }
-            
-            /* Tombol panah di mobile tetap 40px */
-            .arrow-btn {
-                width: 40px;
-                min-width: 40px;
-                height: 40px;
-                min-height: 40px;
-            }
+        .download-icon {
+            margin-right: 10px;
+            font-size: 1.1rem;
+            display: inline-flex;
+            align-items: center;
+            width: 20px;
+        }
+
+        @media(max-width:500px) {
+            .header { padding: 30px 20px; }
+            .header h1 { font-size: 1.35rem; }
+            .category-header { padding: 16px 20px; }
+            .job-list { padding: 0 20px 15px; }
         }
     </style>
 </head>
 <body>
 
     <div class="header">
-        <h1>Sales Counter</h1>
+        <div class="header-inner">
+            <h1>Sales Counter</h1>
+            <p>Job Desc & Laporan Berkala</p>
+        </div>
     </div>
-    
-    <ul class="list-section">
-        
-        <li class="list-item">
-            <div class="list-item-content">
-                <a class="link" href="https://drive.google.com/drive/folders/1frRkDfIgu9LLxQvmyr_zmoSeZi-xP78b?usp=sharing" target="_blank">
-                    Brosur dan kartu warna
-                </a>
-            </div>
-            <a href="https://drive.google.com/drive/folders/1frRkDfIgu9LLxQvmyr_zmoSeZi-xP78b?usp=sharing" target="_blank" class="arrow-btn">&#x2794;</a>
-        </li>
 
-        <li class="list-item">
-            <div class="list-item-content">
-                <a class="link" href="https://drive.google.com/drive/folders/1iG0VoowrzGB5MIR_C-sGMKYBusrD2V9z?usp=sharing" target="_blank">
-                    Form sell-out, izin dan cuti
-                </a>
+    <div class="content-container">
+        <div class="category-wrapper">
+            <div class="category-header" onclick="toggleSection(this)">
+                <h2>Harian</h2>
+                <span class="plus-icon">+</span>
             </div>
-            <a href="https://drive.google.com/drive/folders/1iG0VoowrzGB5MIR_C-sGMKYBusrD2V9z?usp=sharing" target="_blank" class="arrow-btn">&#x2794;</a>
-        </li>
-
-        <li class="list-item">
-            <div class="list-item-content">
-                <a class="link" href="kompetitor.html">Laporan kompetitor</a>
-                <div class="desc">
-                    Dikerjakan setiap awal bulan dan kirim ke grup sales counter.
+            <div class="sub-content">
+                <div class="job-list">
+                    <div class="job-item">
+                        <span class="job-title">Laporan Penjualan Harian</span>
+                        <span class="job-desc">Dikirimkan ke grup setiap hari.</span>
+                    </div>
+                    <div class="job-item">
+                        <span class="job-title">Perawatan Mesin Berkala</span>
+                        <span class="job-desc">Dilakukan setiap hari. Kirim laporannya ke grup maksimal tanggal 7 setiap bulan.</span>
+                    </div>
                 </div>
             </div>
-            <a href="kompetitor.html" class="arrow-btn">&#x2794;</a>
-        </li>
-        
-    </ul>
+        </div>
+
+        <div class="category-wrapper">
+            <div class="category-header" onclick="toggleSection(this)">
+                <h2>Mingguan</h2>
+                <span class="plus-icon">+</span>
+            </div>
+            <div class="sub-content">
+                <div class="job-list">
+                    <div class="job-item">
+                        <span class="job-title">Laporan Penjualan Mingguan</span>
+                        <span class="job-desc">Dikirimkan ke grup setiap akhir pekan.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="category-wrapper">
+            <div class="category-header" onclick="toggleSection(this)">
+                <h2>Bulanan</h2>
+                <span class="plus-icon">+</span>
+            </div>
+            <div class="sub-content">
+                <div class="job-list">
+                    <div class="job-item">
+                        <span class="job-title">Laporan Penjualan Bulanan</span>
+                        <span class="job-desc">Dikirimkan ke grup maksimal tanggal 7 setiap bulan.</span>
+                    </div>
+                    <div class="job-item">
+                        <span class="job-title">Laporan Kompetitor</span>
+                        <span class="job-desc">Maksimal tanggal 7 setiap bulan.</span>
+                        <a href="kompetitor.html" class="btn-action">Buat Laporan</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="category-wrapper">
+            <div class="category-header" onclick="toggleSection(this)">
+                <h2>Absensi</h2>
+                <span class="plus-icon">+</span>
+            </div>
+            <div class="sub-content">
+                <div class="job-list">
+                    <div class="job-item">
+                        <span class="job-title">Kehadiran</span>
+                        <span class="job-desc">Absen masuk dan pulang wajib dilakukan. Jika terdapat kendala atau alasan tertentu, informasikan ke admin dan SPV.</span>
+                    </div>
+                    <div class="job-item">
+                        <span class="job-title">Izin, Sakit, & Cuti</span>
+                        <span class="job-desc">Segala bentuk ketidakhadiran (cuti, izin, atau sakit) wajib mendapatkan persetujuan SPV dengan melampirkan formulir yang sesuai.</span>
+                    </div>
+					<div class="job-item">
+                        <span class="job-title">Tukar Off</span>
+                        <span class="job-desc">Jika harus tukar off karena suatu alasan, informasikan ke admin dan SPV.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="download-section">
+            <span class="download-label">Unduhan</span>
+            <div class="download-grid">
+                <a href="https://drive.google.com/drive/folders/1frRkDfIgu9LLxQvmyr_zmoSeZi-xP78b?usp=sharing" target="_blank" class="download-link">
+                    <span class="download-icon">📁</span> Brosur & Kartu Warna
+                </a>
+                <a href="https://drive.google.com/drive/folders/1iG0VoowrzGB5MIR_C-sGMKYBusrD2V9z?usp=sharing" target="_blank" class="download-link">
+                    <span class="download-icon">📄</span> Kumpulan Formulir
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleSection(element) {
+            const wrapper = element.parentElement;
+            wrapper.classList.toggle('active');
+        }
+    </script>
 
 </body>
 </html>
-
