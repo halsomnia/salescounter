@@ -7,304 +7,348 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&display=swap" rel="stylesheet">
+
+    <link rel="icon" type="image/png" href="favicon.png">
 
     <style>
-        :root {
-            --bg-body: #f8f9fa;
-            --text-main: #121212;
-            --text-muted: #6c757d;
-            --accent: #000000;
-            --card-bg: #ffffff;
-            --border: #ececec;
+        :root{
+            --ink:#15140F;
+            --paper:#FAF9F6;
+            --card:#FFFFFF;
+            --line:#E7E4DC;
+            --muted:#8B887E;
+
+            --c-order:#3B6FE0;
+            --c-doc:#E0A63B;
+            --c-swatch1:#E0553B;
+            --c-swatch2:#3BA3E0;
+            --c-swatch3:#E0C13B;
+            --c-swatch4:#7A3BE0;
+
+            --c-att-ok:#2F9E6E;
+            --c-att-warn:#E0A63B;
+            --c-att-swap:#3B6FE0;
         }
 
-        body {
-            margin: 0;
-            font-family: 'DM Sans', sans-serif;
-            background: var(--bg-body);
-            color: var(--text-main);
-            -webkit-font-smoothing: antialiased;
-            line-height: 1.6;
+        *{ box-sizing:border-box; }
+
+        body{
+            margin:0;
+            font-family:'DM Sans', sans-serif;
+            background:var(--paper);
+            color:var(--ink);
+            -webkit-font-smoothing:antialiased;
         }
 
-        /* HEADER - REDUCED SIZE */
-        .header {
-            background: var(--accent);
-            color: #fff;
-            padding: 35px 20px; /* Diperkecil dari versi sebelumnya */
+        /* HEADER */
+        .header{
+            padding:56px 32px 40px;
+            max-width:640px;
+            margin:0 auto;
         }
 
-        .header-inner {
-            max-width: 800px;
-            margin: 0 auto;
+        .header h1{
+            margin:0;
+            font-size:2.6em;
+            font-weight:800;
+            letter-spacing:-0.02em;
+            line-height:1.05;
         }
 
-        .header h1 {
-            margin: 0;
-            font-size: 1.5rem; /* Ukuran font lebih proporsional */
-            font-weight: 700;
-            letter-spacing: -0.5px;
+        /* WRAPPER */
+        .wrap{
+            max-width:640px;
+            margin:0 auto;
+            padding:8px 32px 64px;
         }
 
-        .header p {
-            margin: 4px 0 0;
-            opacity: 0.6;
-            font-size: 0.85rem;
+        /* ABSENSI CARD - always visible */
+        .attendance-card{
+            border:1px solid var(--line);
+            border-radius:16px;
+            background:var(--card);
+            padding:6px 20px;
+            margin-top:28px;
         }
 
-        /* MAIN CONTAINER */
-        .content-container {
-            max-width: 800px;
-            margin: -15px auto 40px; /* Penyesuaian offset agar tetap rapi */
-            padding: 0 15px;
+        .attendance-row{
+            display:flex;
+            gap:16px;
+            padding:18px 0;
+            border-bottom:1px solid var(--line);
         }
 
-        /* ACCORDION SECTION */
-        .category-wrapper {
-            background: var(--card-bg);
-            border-radius: 12px;
-            margin-bottom: 10px;
-            border: 1px solid var(--border);
-            overflow: hidden;
-            transition: all 0.3s ease;
+        .attendance-row:last-child{
+            border-bottom:none;
         }
 
-        .category-wrapper.active {
-            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+        .att-dot{
+            width:10px;
+            height:10px;
+            min-width:10px;
+            border-radius:50%;
+            margin-top:7px;
         }
 
-        .category-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 18px 24px;
-            cursor: pointer;
-            user-select: none;
+        .att-body{
+            flex-grow:1;
         }
 
-        .category-header h2 {
-            margin: 0;
-            font-size: 1rem;
-            font-weight: 700;
+        .att-title{
+            font-weight:700;
+            font-size:1.02em;
+            display:block;
+            margin-bottom:3px;
         }
 
-        .plus-icon {
-            font-size: 1.1rem;
-            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            color: var(--text-muted);
+        .att-desc{
+            font-size:0.9em;
+            color:var(--muted);
+            line-height:1.5;
+            display:block;
         }
 
-        .category-wrapper.active .plus-icon {
-            transform: rotate(45deg);
+        /* LIST LINKS (mengikuti gaya spv.html) */
+        .list-section{
+            list-style:none;
+            margin:0;
+            padding:0;
         }
 
-        .sub-content {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            background: #fff;
+        .list-item{
+            border-bottom:1px solid var(--line);
         }
 
-        .category-wrapper.active .sub-content {
-            max-height: 800px;
+        .list-item:first-child{
+            border-top:1px solid var(--line);
         }
 
-        .job-list {
-            padding: 0 24px 18px;
+        .link{
+            display:flex;
+            align-items:center;
+            gap:18px;
+            padding:20px 4px;
+            text-decoration:none;
+            color:inherit;
+            border-radius:10px;
+            transition: background 0.15s ease, transform 0.15s ease;
         }
 
-        .job-item {
-            padding: 14px 0;
-            border-top: 1px solid var(--border);
+        .link:hover, .link:focus-visible{
+            background:var(--card);
+            transform: translateX(2px);
         }
 
-        .job-title {
-            font-size: 0.95rem;
-            font-weight: 600;
-            display: block;
-            margin-bottom: 2px;
+        .link:focus-visible{
+            outline:2px solid var(--ink);
+            outline-offset:2px;
         }
 
-        .job-desc {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            display: block;
+        .swatch{
+            width:14px;
+            height:14px;
+            min-width:14px;
+            border-radius:4px;
         }
 
-        .btn-action {
-            display: inline-flex;
-            align-items: center;
-            background: var(--accent);
-            color: #fff;
-            text-decoration: none;
-            padding: 8px 16px;
-            border-radius: 6px;
-            margin-top: 12px;
-            font-size: 0.8rem;
-            font-weight: 500;
-            transition: transform 0.2s;
+        .icon-wrap{
+            width:44px;
+            height:44px;
+            min-width:44px;
+            border-radius:12px;
+            background:var(--card);
+            border:1px solid var(--line);
+            display:flex;
+            align-items:center;
+            justify-content:center;
         }
 
-        /* DOWNLOAD SECTION - COMPACT */
-        .download-section {
-            margin-top: 25px;
-            padding: 10px;
+        .icon-wrap svg{
+            width:20px;
+            height:20px;
         }
 
-        .download-label {
-            font-size: 0.65rem;
-            color: var(--text-muted);
-            margin-bottom: 6px;
-            display: block;
-            text-transform: uppercase;
-            font-weight: 700;
-            letter-spacing: 1px;
+        .list-item-content{
+            flex-grow:1;
         }
 
-        .download-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 0; 
+        .title{
+            font-size:1.12em;
+            font-weight:600;
+            letter-spacing:-0.005em;
+            display:block;
         }
 
-        .download-link {
-            display: flex;
-            align-items: center;
-            padding: 8px 0;
-            color: var(--text-main);
-            text-decoration: none;
-            font-weight: 500;
-            font-size: 0.95rem;
-            transition: opacity 0.2s ease;
+        .arrow{
+            width:34px;
+            height:34px;
+            min-width:34px;
+            border-radius:50%;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            color:var(--ink);
+            transition: background 0.15s ease;
         }
 
-        .download-link:hover {
-            opacity: 0.5;
+        .link:hover .arrow{
+            background:var(--ink);
+            color:var(--paper);
         }
 
-        .download-icon {
-            margin-right: 10px;
-            font-size: 1.1rem;
-            display: inline-flex;
-            align-items: center;
-            width: 20px;
+        .arrow svg{
+            width:15px;
+            height:15px;
         }
 
-        @media(max-width:500px) {
-            .header { padding: 30px 20px; }
-            .header h1 { font-size: 1.35rem; }
-            .category-header { padding: 16px 20px; }
-            .job-list { padding: 0 20px 15px; }
+        .card-swatches{
+            display:grid;
+            grid-template-columns:repeat(2, 1fr);
+            gap:3px;
+        }
+        .card-swatches .swatch{
+            width:11px;
+            height:11px;
+            min-width:11px;
+            border-radius:3px;
+        }
+
+        .section-label{
+            font-size:0.78em;
+            font-weight:700;
+            color:var(--muted);
+            margin:0 0 10px 4px;
+        }
+
+        footer{
+            position:fixed;
+            left:0;
+            right:0;
+            bottom:0;
+            background:var(--paper);
+            padding:16px 32px;
+            font-size:0.82em;
+            color:var(--muted);
+            font-weight:500;
+            text-align:center;
+        }
+
+        .wrap{
+            padding-bottom:96px;
+        }
+
+        @media(max-width:500px){
+            .header{
+                padding:40px 20px 28px;
+            }
+            .header h1{
+                font-size:2.1em;
+            }
+            .wrap{
+                padding:4px 20px 48px;
+            }
+            .title{
+                font-size:1.04em;
+            }
+            .attendance-card{
+                padding:2px 16px;
+            }
+            footer{
+                padding:14px 20px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce){
+            .link, .arrow{ transition:none; }
         }
     </style>
 </head>
 <body>
 
     <div class="header">
-        <div class="header-inner">
-            <h1>Sales Counter</h1>
-            <p>Job Desc & Laporan Berkala</p>
-        </div>
+        <h1>Sales Counter</h1>
     </div>
 
-    <div class="content-container">
-        <div class="category-wrapper">
-            <div class="category-header" onclick="toggleSection(this)">
-                <h2>Harian</h2>
-                <span class="plus-icon">+</span>
-            </div>
-            <div class="sub-content">
-                <div class="job-list">
-                    <div class="job-item">
-                        <span class="job-title">Laporan Penjualan Harian</span>
-                        <span class="job-desc">Dikirimkan ke grup setiap hari.</span>
-                    </div>
-                    <div class="job-item">
-                        <span class="job-title">Perawatan Mesin Berkala</span>
-                        <span class="job-desc">Dilakukan setiap hari. Kirim laporannya ke grup maksimal tanggal 7 setiap bulan.</span>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <div class="wrap">
 
-        <div class="category-wrapper">
-            <div class="category-header" onclick="toggleSection(this)">
-                <h2>Mingguan</h2>
-                <span class="plus-icon">+</span>
-            </div>
-            <div class="sub-content">
-                <div class="job-list">
-                    <div class="job-item">
-                        <span class="job-title">Laporan Penjualan Mingguan</span>
-                        <span class="job-desc">Dikirimkan ke grup setiap akhir pekan.</span>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <ul class="list-section">
 
-        <div class="category-wrapper">
-            <div class="category-header" onclick="toggleSection(this)">
-                <h2>Bulanan</h2>
-                <span class="plus-icon">+</span>
-            </div>
-            <div class="sub-content">
-                <div class="job-list">
-                    <div class="job-item">
-                        <span class="job-title">Laporan Penjualan Bulanan</span>
-                        <span class="job-desc">Dikirimkan ke grup maksimal tanggal 7 setiap bulan.</span>
+            <li class="list-item">
+                <a class="link" href="https://script.google.com/macros/s/AKfycbzpnbWNQYr3pWgEoiotPhif7Y7VpK_qTuYFDtXjqjt-hm0gbzpUMr-kfVYch2m05N5X/exec">
+                    <span class="icon-wrap" style="color:var(--c-order)">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 15l4-5 3 3 5-7"/></svg>
+                    </span>
+                    <div class="list-item-content">
+                        <span class="title">Laporan Kompetitor</span>
                     </div>
-                    <div class="job-item">
-                        <span class="job-title">Laporan Kompetitor</span>
-                        <span class="job-desc">Maksimal tanggal 7 setiap bulan.</span>
-                        <a href="https://script.google.com/macros/s/AKfycbzpnbWNQYr3pWgEoiotPhif7Y7VpK_qTuYFDtXjqjt-hm0gbzpUMr-kfVYch2m05N5X/exec" class="btn-action">Buat Laporan</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="category-wrapper">
-            <div class="category-header" onclick="toggleSection(this)">
-                <h2>Absensi</h2>
-                <span class="plus-icon">+</span>
-            </div>
-            <div class="sub-content">
-                <div class="job-list">
-                    <div class="job-item">
-                        <span class="job-title">Kehadiran</span>
-                        <span class="job-desc">Absen masuk dan pulang wajib dilakukan. Jika terdapat kendala atau alasan tertentu, informasikan ke admin dan SPV.</span>
-                    </div>
-                    <div class="job-item">
-                        <span class="job-title">Izin, Sakit, & Cuti</span>
-                        <span class="job-desc">Segala bentuk ketidakhadiran (cuti, izin, atau sakit) wajib mendapatkan persetujuan SPV dengan melampirkan formulir yang sesuai.</span>
-                    </div>
-					<div class="job-item">
-                        <span class="job-title">Tukar Off</span>
-                        <span class="job-desc">Jika harus tukar off karena suatu alasan, informasikan ke admin dan SPV.</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="download-section">
-            <span class="download-label">Unduhan</span>
-            <div class="download-grid">
-                <a href="https://drive.google.com/drive/folders/1frRkDfIgu9LLxQvmyr_zmoSeZi-xP78b?usp=sharing" target="_blank" class="download-link">
-                    <span class="download-icon">📁</span> Brosur & Kartu Warna
+                    <span class="arrow">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                    </span>
                 </a>
-                <a href="https://drive.google.com/drive/folders/1iG0VoowrzGB5MIR_C-sGMKYBusrD2V9z?usp=sharing" target="_blank" class="download-link">
-                    <span class="download-icon">📄</span> Kumpulan Formulir
+            </li>
+
+            <li class="list-item">
+                <a class="link" href="https://drive.google.com/drive/folders/1frRkDfIgu9LLxQvmyr_zmoSeZi-xP78b?usp=sharing" target="_blank">
+                    <span class="icon-wrap">
+                        <span class="card-swatches" aria-hidden="true">
+                            <span class="swatch" style="background:var(--c-swatch1)"></span>
+                            <span class="swatch" style="background:var(--c-swatch2)"></span>
+                            <span class="swatch" style="background:var(--c-swatch3)"></span>
+                            <span class="swatch" style="background:var(--c-swatch4)"></span>
+                        </span>
+                    </span>
+                    <div class="list-item-content">
+                        <span class="title">Brosur &amp; Kartu Warna</span>
+                    </div>
+                    <span class="arrow">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                    </span>
                 </a>
+            </li>
+
+            <li class="list-item">
+                <a class="link" href="https://drive.google.com/drive/folders/1iG0VoowrzGB5MIR_C-sGMKYBusrD2V9z?usp=sharing" target="_blank">
+                    <span class="icon-wrap" style="color:var(--c-doc)">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6l3 3v15H6V3z"/><path d="M9 12h6M9 16h6M9 8h2"/></svg>
+                    </span>
+                    <div class="list-item-content">
+                        <span class="title">Kumpulan Formulir</span>
+                    </div>
+                    <span class="arrow">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                    </span>
+                </a>
+            </li>
+
+        </ul>
+
+        <div class="attendance-card">
+            <div class="attendance-row">
+                <span class="att-dot" style="background:var(--c-att-ok)"></span>
+                <div class="att-body">
+                    <span class="att-title">Kehadiran</span>
+                    <span class="att-desc">Absen masuk dan pulang wajib dilakukan. Jika terdapat kendala atau alasan tertentu, informasikan ke admin dan SPV.</span>
+                </div>
+            </div>
+            <div class="attendance-row">
+                <span class="att-dot" style="background:var(--c-att-warn)"></span>
+                <div class="att-body">
+                    <span class="att-title">Izin, Sakit, &amp; Cuti</span>
+                    <span class="att-desc">Segala bentuk ketidakhadiran (cuti, izin, atau sakit) wajib mendapatkan persetujuan SPV dengan melampirkan formulir yang sesuai.</span>
+                </div>
+            </div>
+            <div class="attendance-row">
+                <span class="att-dot" style="background:var(--c-att-swap)"></span>
+                <div class="att-body">
+                    <span class="att-title">Tukar Off</span>
+                    <span class="att-desc">Jika harus tukar off karena suatu alasan, informasikan ke admin dan SPV.</span>
+                </div>
             </div>
         </div>
     </div>
 
-    <script>
-        function toggleSection(element) {
-            const wrapper = element.parentElement;
-            wrapper.classList.toggle('active');
-        }
-    </script>
+    <footer>NSI Bandung &middot; Portal Sales Counter</footer>
 
 </body>
 </html>
